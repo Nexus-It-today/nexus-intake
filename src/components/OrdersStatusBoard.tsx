@@ -465,7 +465,7 @@ export default function OrdersStatusBoard(props: OrdersStatusBoardProps) {
             className={
               "rounded-full border px-3 py-1.5 text-xs font-semibold " +
               (datePreset === preset.value
-                ? "border-[#7C3AED] bg-violet-50 text-[#7C3AED]"
+                ? "border-blue-500 bg-blue-50 text-blue-700"
                 : "border-slate-200 bg-white text-slate-700")
             }
           >
@@ -645,14 +645,14 @@ export default function OrdersStatusBoard(props: OrdersStatusBoardProps) {
                         {job.trackPodPushStatus}
                       </span>
                       {job.trackPodDeliveryTrackingUrl ? (
-                        <a href={job.trackPodDeliveryTrackingUrl} target="_blank" rel="noreferrer" className="block text-xs font-semibold text-[#7C3AED] underline-offset-2 hover:underline">
+                        <a href={job.trackPodDeliveryTrackingUrl} target="_blank" rel="noreferrer" className="block text-xs font-semibold text-blue-600 underline-offset-2 hover:underline">
                           Delivery link
                         </a>
                       ) : (
                         <div className="text-xs text-slate-500">D: {job.trackPodDeliveryOrderId || "-"}</div>
                       )}
                       {job.trackPodCollectionTrackingUrl ? (
-                        <a href={job.trackPodCollectionTrackingUrl} target="_blank" rel="noreferrer" className="block text-xs font-semibold text-[#7C3AED] underline-offset-2 hover:underline">
+                        <a href={job.trackPodCollectionTrackingUrl} target="_blank" rel="noreferrer" className="block text-xs font-semibold text-blue-600 underline-offset-2 hover:underline">
                           Collection link
                         </a>
                       ) : (
@@ -693,7 +693,7 @@ export default function OrdersStatusBoard(props: OrdersStatusBoardProps) {
                         type="button"
                         onClick={() => void sendToProcess(job.id)}
                         disabled={sendingToProcessId === job.id}
-                        className="rounded-lg border border-violet-200 bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-700 disabled:opacity-60"
+                        className="rounded-lg border border-blue-200 bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 disabled:opacity-60"
                       >
                         {sendingToProcessId === job.id ? "Sending..." : "Send to Process It"}
                       </button>
@@ -834,7 +834,7 @@ export default function OrdersStatusBoard(props: OrdersStatusBoardProps) {
               type="button"
               disabled={savingEdit}
               onClick={() => void saveEdit()}
-              className="rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
             >
               {savingEdit ? "Saving..." : "Save changes"}
             </button>

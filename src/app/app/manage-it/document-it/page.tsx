@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -97,7 +97,7 @@ const MOCK_DOCUMENTS: DocumentRow[] = [
   {
     id: "doc-004",
     status: "AI Processing",
-    merchant: "Nexus Delivery Solutions",
+    merchant: "Doorway Group",
     customer: "DI Designs",
     uploadDate: "2026-06-28 10:02",
     filename: "bulk-manifest-0628b.pdf",
@@ -185,12 +185,12 @@ const MOCK_DETAIL: Record<string, DocumentDetail> = {
 const STATUS_COLOURS: Record<DocumentStatus, string> = {
   Uploaded: "bg-slate-100 text-slate-700",
   Queued: "bg-blue-50 text-blue-700",
-  "AI Processing": "bg-purple-50 text-purple-700",
+  "AI Processing": "bg-cyan-50 text-cyan-700",
   "Needs Review": "bg-amber-50 text-amber-700",
   Validated: "bg-sky-50 text-sky-700",
   "Ready to Create": "bg-emerald-50 text-emerald-700",
   "Job Created": "bg-teal-50 text-teal-700",
-  "Route Allocated": "bg-indigo-50 text-indigo-700",
+  "Route Allocated": "bg-slate-100 text-slate-700",
   Completed: "bg-green-50 text-green-700",
   Failed: "bg-red-50 text-red-700",
 };
@@ -209,14 +209,14 @@ function StatusBadge({ status }: { status: DocumentStatus }) {
 
 const METRICS = [
   { label: "Uploaded Today", value: "12", colour: "text-slate-900" },
-  { label: "Processing", value: "3", colour: "text-purple-700" },
+  { label: "Processing", value: "3", colour: "text-cyan-700" },
   { label: "Needs Review", value: "4", colour: "text-amber-600" },
   { label: "Ready to Create", value: "5", colour: "text-emerald-600" },
   { label: "Jobs Created Today", value: "8", colour: "text-teal-600" },
   { label: "Completed Today", value: "6", colour: "text-green-600" },
   { label: "Failed", value: "1", colour: "text-red-600" },
   { label: "Avg AI Confidence", value: "91%", colour: "text-sky-600" },
-  { label: "Avg Processing Time", value: "1m 42s", colour: "text-indigo-600" },
+  { label: "Avg Processing Time", value: "1m 42s", colour: "text-slate-700" },
 ];
 
 // ── Detail panel ──────────────────────────────────────────────────────────────
@@ -234,7 +234,7 @@ function DetailPanel({
       <div className="w-full max-w-3xl overflow-y-auto bg-white shadow-2xl">
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#7C3AED]">Document it.</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">Document it.</p>
             <h2 className="text-lg font-semibold text-slate-900">{doc.filename}</h2>
           </div>
           <button
@@ -317,7 +317,7 @@ function DetailPanel({
               {doc.timeline.map((t, i) => (
                 <div key={i} className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="h-3 w-3 rounded-full bg-[#7C3AED] mt-1" />
+                    <div className="h-3 w-3 rounded-full bg-blue-600 mt-1" />
                     {i < doc.timeline.length - 1 && <div className="w-px flex-1 bg-slate-200 mt-1" />}
                   </div>
                   <div className="pb-4">
@@ -334,7 +334,7 @@ function DetailPanel({
 
           {/* Action buttons */}
           <div className="flex flex-wrap gap-2 border-t border-slate-100 pt-4">
-            <button className="rounded-lg bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white hover:bg-[#6D28D9] transition">
+            <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition">
               Approve
             </button>
             <button className="rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 transition">
@@ -518,7 +518,7 @@ export default function DocumentItPage() {
         {/* Header */}
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#7C3AED]">Manage it.</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">Manage it.</p>
             <h1 className="text-2xl font-bold text-slate-900">Document it.</h1>
             <p className="text-sm text-slate-500 mt-0.5">
               Complete document management — from uploaded file to completed delivery.
@@ -527,7 +527,7 @@ export default function DocumentItPage() {
           <div className="flex gap-2">
             <Link
               href="/portal/documents"
-              className="rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white hover:bg-[#6D28D9] transition"
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition"
             >
               Upload Document
             </Link>
@@ -554,12 +554,12 @@ export default function DocumentItPage() {
             placeholder="Search filename, customer, merchant…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-48 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/30"
+            className="flex-1 min-w-48 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
           />
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/30"
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-100"
           >
             <option value="all">All Statuses</option>
             {(
@@ -582,7 +582,7 @@ export default function DocumentItPage() {
           <select
             value={filterMerchant}
             onChange={(e) => setFilterMerchant(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/30"
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-100"
           >
             <option value="all">All Merchants</option>
             {merchants.map((m) => (
@@ -598,7 +598,7 @@ export default function DocumentItPage() {
               <button className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs font-semibold text-teal-700 hover:bg-teal-100">
                 Create Jobs
               </button>
-              <button className="rounded-lg border border-purple-200 bg-purple-50 px-3 py-2 text-xs font-semibold text-purple-700 hover:bg-purple-100">
+              <button className="rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2 text-xs font-semibold text-cyan-700 hover:bg-cyan-100">
                 Re-run AI
               </button>
               <button className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100">
@@ -672,7 +672,7 @@ export default function DocumentItPage() {
                       <td className="px-4 py-3">
                         <button
                           onClick={() => openDetail(doc.id)}
-                          className="text-[#7C3AED] hover:underline font-medium text-left"
+                          className="text-blue-600 hover:underline font-medium text-left"
                         >
                           {doc.filename}
                         </button>
@@ -716,7 +716,7 @@ export default function DocumentItPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => openDetail(doc.id)}
-                            className="text-xs font-medium text-[#7C3AED] hover:underline"
+                            className="text-xs font-medium text-blue-600 hover:underline"
                           >
                             View
                           </button>
@@ -761,17 +761,12 @@ export default function DocumentItPage() {
               "Route Allocated",
               "Completed",
             ].map((step, i, arr) => (
-              <>
-                <span
-                  key={step}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-medium text-slate-600"
-                >
+              <Fragment key={step}>
+                <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 font-medium text-slate-600">
                   {step}
                 </span>
-                {i < arr.length - 1 && (
-                  <span key={`arrow-${i}`} className="text-slate-300">→</span>
-                )}
-              </>
+                {i < arr.length - 1 && <span className="text-slate-300">→</span>}
+              </Fragment>
             ))}
             <span className="text-slate-300">or</span>
             <span className="rounded-full border border-red-100 bg-red-50 px-3 py-1 font-medium text-red-600">

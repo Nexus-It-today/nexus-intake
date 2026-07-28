@@ -352,7 +352,7 @@ function SearchItPageContent() {
             <button
               onClick={() => void runSearch()}
               disabled={loading}
-              className="rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
             >
               {loading ? "Searching..." : "Search"}
             </button>

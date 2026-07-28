@@ -457,7 +457,7 @@ export default function MerchantManagementBoard({ title = "Merchant Management",
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => setCreateOpen(true)} className="rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white">Create Merchant</button>
+            <button onClick={() => setCreateOpen(true)} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">Create Merchant</button>
             <label className="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700">
               Import Merchant
               <input
@@ -545,7 +545,7 @@ export default function MerchantManagementBoard({ title = "Merchant Management",
                 </tr>
               ) : (
                 merchants.map((merchant) => (
-                  <tr key={merchant.id} className={selectedMerchantId === merchant.id ? "bg-violet-50" : ""}>
+                  <tr key={merchant.id} className={selectedMerchantId === merchant.id ? "bg-blue-50" : ""}>
                     <td className="px-3 py-2 font-semibold text-slate-900">{merchant.merchantName}</td>
                     <td className="px-3 py-2 text-slate-700">{merchant.company || "-"}</td>
                     <td className="px-3 py-2 text-slate-700">{merchant.contact || "-"}</td>
@@ -755,7 +755,7 @@ export default function MerchantManagementBoard({ title = "Merchant Management",
             <input value={formMerchantName} onChange={(event) => setFormMerchantName(event.target.value)} placeholder="Merchant Name" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" />
             <input value={formCompany} onChange={(event) => setFormCompany(event.target.value)} placeholder="Company" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" />
             <input value={formBusinessType} onChange={(event) => setFormBusinessType(event.target.value)} placeholder="Business Type" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-            <button onClick={() => void submitCreate()} className="rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white">Create Merchant</button>
+            <button onClick={() => void submitCreate()} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">Create Merchant</button>
           </div>
         </Modal>
       ) : null}
@@ -775,7 +775,7 @@ export default function MerchantManagementBoard({ title = "Merchant Management",
               <option value="disabled">Disabled</option>
               <option value="archived">Archived</option>
             </select>
-            <button onClick={() => void submitEdit()} className="rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-semibold text-white">Save</button>
+            <button onClick={() => void submitEdit()} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">Save</button>
           </div>
         </Modal>
       ) : null}

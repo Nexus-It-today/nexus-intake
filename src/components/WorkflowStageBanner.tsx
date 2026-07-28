@@ -49,7 +49,7 @@ export default function WorkflowStageBanner({ currentStage, orderStatus, nextReq
                 className={
                   "rounded-full px-3 py-1 text-xs font-semibold " +
                   (index === currentIndex
-                    ? "bg-[#7C3AED] text-white"
+                    ? "bg-blue-600 text-white"
                     : index < currentIndex
                       ? "bg-emerald-100 text-emerald-700"
                       : "bg-slate-100 text-slate-500")
@@ -70,7 +70,7 @@ export default function WorkflowStageBanner({ currentStage, orderStatus, nextReq
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Next Stage</p>
           {nextStage ? (
             stageLinks[nextStage] ? (
-              <Link href={stageLinks[nextStage]!} className="mt-1 inline-block text-sm font-semibold text-[#7C3AED] underline-offset-2 hover:underline">
+              <Link href={stageLinks[nextStage]!} className="mt-1 inline-block text-sm font-semibold text-blue-600 underline-offset-2 hover:underline">
                 {stageTitles[nextStage]}
               </Link>
             ) : (

@@ -123,7 +123,7 @@ function normalizeText(value: string): string {
 }
 
 const inputClass =
-  "mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-[#7C3AED] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20";
+  "mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100";
 
 const sectionClass =
   "rounded-2xl border border-slate-200 bg-white p-5 sm:p-6";
@@ -1102,7 +1102,7 @@ const isMerchantView = sourceSystem === "merchant_portal";
               }}
               className={`rounded-xl border px-4 py-3 text-left text-sm ${
                 collectionMode === "depot"
-                  ? "border-[#7C3AED] bg-violet-50 text-violet-800"
+                  ? "border-blue-500 bg-blue-50 text-blue-800"
                   : "border-slate-200 bg-white text-slate-700"
               }`}
             >
@@ -1119,7 +1119,7 @@ const isMerchantView = sourceSystem === "merchant_portal";
               }}
               className={`rounded-xl border px-4 py-3 text-left text-sm ${
                 collectionMode === "new_address"
-                  ? "border-[#7C3AED] bg-violet-50 text-violet-800"
+                  ? "border-blue-500 bg-blue-50 text-blue-800"
                   : "border-slate-200 bg-white text-slate-700"
               }`}
             >
@@ -1323,7 +1323,7 @@ const isMerchantView = sourceSystem === "merchant_portal";
                       <textarea className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm md:col-span-2" rows={2} placeholder="Delivery instructions" value={newCustomerForm.instructions} onChange={(event) => setNewCustomerForm((prev) => ({ ...prev, instructions: event.target.value }))} />
                     </div>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <button type="button" onClick={() => void createCustomerInline()} disabled={newCustomerSaving} className="rounded-lg bg-[#7C3AED] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60">
+                      <button type="button" onClick={() => void createCustomerInline()} disabled={newCustomerSaving} className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60">
                         {newCustomerSaving ? "Creating..." : "Create Customer"}
                       </button>
                       <button type="button" onClick={() => setShowNewCustomerForm(false)} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700">
@@ -1731,7 +1731,7 @@ const isMerchantView = sourceSystem === "merchant_portal";
               type="submit"
               value="process"
               disabled={submitState === "submitting"}
-              className="rounded-xl bg-[#7C3AED] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+              className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
             >
               {submitState === "submitting" && submitIntent === "process" ? "Submitting..." : "Submit to Process it"}
             </button>

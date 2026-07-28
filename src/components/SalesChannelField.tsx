@@ -82,7 +82,7 @@ export default function SalesChannelField({
     <div className="relative">
       <label className="text-sm font-medium text-slate-700">{label}</label>
       <input
-        className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-[#7C3AED] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20"
+        className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
         value={query}
         onFocus={() => setOpen(true)}
         onBlur={() => window.setTimeout(() => setOpen(false), 100)}
@@ -117,7 +117,7 @@ export default function SalesChannelField({
               onMouseDown={(event) => event.preventDefault()}
               onClick={createChannel}
               disabled={busy}
-              className="mt-2 w-full rounded-xl border border-dashed border-slate-300 px-3 py-2 text-left text-sm font-medium text-slate-600 hover:border-[#7C3AED] hover:text-slate-900 disabled:opacity-60"
+              className="mt-2 w-full rounded-xl border border-dashed border-slate-300 px-3 py-2 text-left text-sm font-medium text-slate-600 hover:border-blue-400 hover:text-slate-900 disabled:opacity-60"
             >
               {busy ? "Saving..." : `Create “${query.trim()}”`}
             </button>

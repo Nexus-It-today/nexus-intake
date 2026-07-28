@@ -66,7 +66,7 @@ export default function MerchantCreateItWorkspace() {
           <Link
             key={card.title}
             href={card.href}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/30 transition hover:-translate-y-0.5 hover:border-[#7C3AED]/40"
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-200/30 transition hover:-translate-y-0.5 hover:border-blue-300"
           >
             <p className="text-lg font-semibold text-slate-900">{card.title}</p>
             <p className="mt-2 text-sm text-slate-600">{card.detail}</p>
@@ -89,7 +89,7 @@ export default function MerchantCreateItWorkspace() {
               onClick={() => setBookingVariant(type.key)}
               className={`rounded-2xl border p-4 text-left transition ${
                 bookingVariant === type.key
-                  ? "border-[#7C3AED] bg-violet-50 text-violet-900"
+                  ? "border-blue-500 bg-blue-50 text-blue-900"
                   : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
               }`}
             >

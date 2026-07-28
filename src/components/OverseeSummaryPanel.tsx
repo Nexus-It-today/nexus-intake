@@ -151,7 +151,7 @@ export default function OverseeSummaryPanel({ scope }: OverseeSummaryPanelProps)
         <>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {summary.cards.map((card) => (
-              <Link key={card.label} href={card.href} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-[#7C3AED]/30 hover:bg-white">
+              <Link key={card.label} href={card.href} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-blue-300 hover:bg-white">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{card.label}</p>
                 <p className="mt-2 text-2xl font-semibold text-slate-950">{card.value}</p>
               </Link>

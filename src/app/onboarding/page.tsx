@@ -130,26 +130,27 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#111827] px-4 text-sm text-slate-300">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 text-sm text-slate-500">
         Loading onboarding...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#111827] px-4 py-10 sm:px-6 lg:px-10">
-      <div className="mx-auto w-full max-w-3xl rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl sm:p-8">
+    <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-10">
+      <div className="mx-auto w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <div className="mb-6 text-center sm:text-left">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7C3AED]">Setup</p>
-          <h1 className="mt-2 text-2xl font-semibold text-white">Set up your company</h1>
-          <p className="mt-2 text-sm text-slate-400">Enter your company details to get started with Nexus it today.</p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/nexus-it-today-logo.png" alt="Nexus it today" className="mx-auto h-8 w-auto sm:mx-0" />
+          <h1 className="mt-4 text-2xl font-semibold text-slate-900">Set up your company</h1>
+          <p className="mt-2 text-sm text-slate-500">Enter your company details to get started with Nexus it today.</p>
         </div>
 
         <form className="space-y-5" onSubmit={onSubmit} noValidate>
-          <section className="space-y-4 rounded-2xl border border-white/10 p-4">
-            <h2 className="text-sm font-semibold text-white">Company Details</h2>
+          <section className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <h2 className="text-sm font-semibold text-slate-900">Company Details</h2>
             <div>
-              <label htmlFor="companyName" className="mb-1.5 block text-xs font-medium text-slate-300">
+              <label htmlFor="companyName" className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
                 Company name *
               </label>
               <input
@@ -157,24 +158,24 @@ export default function OnboardingPage() {
                 type="text"
                 value={companyName}
                 onChange={(event) => setCompanyName(event.target.value)}
-                className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-[#7C3AED] focus:outline-none focus:ring-1 focus:ring-[#7C3AED]"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
                 placeholder="e.g., Acme Logistics"
                 required
               />
             </div>
             <div>
-              <label htmlFor="businessType" className="mb-1.5 block text-xs font-medium text-slate-300">
+              <label htmlFor="businessType" className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
                 Business type *
               </label>
               <select
                 id="businessType"
                 value={businessType}
                 onChange={(event) => setBusinessType(event.target.value as BusinessType)}
-                className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white focus:border-[#7C3AED] focus:outline-none focus:ring-1 focus:ring-[#7C3AED]"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
                 required
               >
                 {BUSINESS_TYPES.map((type) => (
-                  <option key={type.value} value={type.value} className="bg-[#111827]">
+                  <option key={type.value} value={type.value}>
                     {type.label}
                   </option>
                 ))}
@@ -185,7 +186,7 @@ export default function OnboardingPage() {
           {error && (
             <div
               role="alert"
-              className="rounded-xl border border-red-400/30 bg-red-500/10 px-3 py-2 text-xs text-red-200"
+              className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700"
             >
               {error}
             </div>
@@ -194,7 +195,7 @@ export default function OnboardingPage() {
           <button
             type="submit"
             disabled={saving}
-            className="flex w-full items-center justify-center rounded-2xl bg-[#7C3AED] px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#7C3AED]/30 transition hover:bg-[#6D28D9] disabled:opacity-50"
+            className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
           >
             {saving ? "Setting up company..." : "Continue to Dashboard"}
           </button>

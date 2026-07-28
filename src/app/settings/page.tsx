@@ -6,27 +6,27 @@ const SETTINGS_AREAS = [
   {
     title: "Brand and identity",
     description: "Logos, colours and contact details, with merchant → organisation → platform inheritance.",
-    href: "/app/brand-it",
+    href: "/app/foundation-it/brand-it",
   },
   {
     title: "Users and permissions",
     description: "Invite, assign roles to, and remove organisation and merchant members.",
-    href: "/app/users",
+    href: "/app/foundation-it/users",
   },
   {
     title: "Integration credentials",
     description: "Configure organisation-scoped credentials for connected providers.",
-    href: "/app/integrate-it",
+    href: "/app/foundation-it/integrate-it",
   },
   {
     title: "Integrate it",
     description: "View and manage every available integration provider.",
-    href: "/app/integrate-it",
+    href: "/app/foundation-it/integrate-it",
   },
   {
     title: "Commercial rules",
     description: "Module entitlements per organisation and merchant, with usage limits.",
-    href: "/app/commercial-it",
+    href: "/app/foundation-it/commercial-it",
   },
 ];
 

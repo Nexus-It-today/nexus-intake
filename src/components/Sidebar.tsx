@@ -172,7 +172,7 @@ export default function Sidebar({ items, activePath, userType = "admin", onUserT
           </div>
 
           <form
-            action="/manage-it/search-it"
+            action="/app/manage-it/search-it"
             method="get"
             className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300 shadow-sm shadow-slate-950/20"
           >

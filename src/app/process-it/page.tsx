@@ -37,7 +37,7 @@ export default function ProcessItPage() {
 
         <div className="flex flex-wrap gap-2 text-xs font-semibold">
           <Link href="/dashboard" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Oversee it</Link>
-          <Link href="/create-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Create it</Link>
+          <Link href="/app/create-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Create it</Link>
           <Link href="/review-it?status=Needs%20Review,Failed%20/%20issue,Failed%20to%20send%20to%20Track-POD" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Review it</Link>
           <Link href="/track-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Track it</Link>
           <Link href="/account-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Account it</Link>

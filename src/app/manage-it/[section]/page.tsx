@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getManageItSection } from "@/lib/manageIt";
 
-export default async function ManageItSectionPage({
+export default async function ManageItSectionRedirectPage({
   params,
 }: {
   params: Promise<{ section: string }>;
@@ -13,5 +13,5 @@ export default async function ManageItSectionPage({
     notFound();
   }
 
-  redirect(`/manage-it?section=${encodeURIComponent(currentSection.slug)}`);
+  redirect(`/app/manage-it?section=${encodeURIComponent(currentSection.slug)}`);
 }

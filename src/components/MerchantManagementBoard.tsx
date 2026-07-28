@@ -563,7 +563,7 @@ export default function MerchantManagementBoard({ title = "Merchant Management",
                         <button
                           onClick={() => {
                             setSelectedMerchantId(merchant.id);
-                            router.push(`/manage-it?merchantId=${encodeURIComponent(merchant.id)}`);
+                            router.push(`/app/manage-it?merchantId=${encodeURIComponent(merchant.id)}`);
                           }}
                           className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700"
                         >
@@ -625,7 +625,7 @@ export default function MerchantManagementBoard({ title = "Merchant Management",
             <div className="flex flex-wrap gap-2 text-xs font-semibold">
               <Link href={`/orders?companyId=${encodeURIComponent(selectedMerchantId)}`} className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700">Orders</Link>
               <Link href={`/process-it?companyId=${encodeURIComponent(selectedMerchantId)}`} className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700">Process it</Link>
-              <Link href={`/manage-it/search-it?q=${encodeURIComponent(selectedMerchantName || "")}`} className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700">Search</Link>
+              <Link href={`/app/manage-it/search-it?q=${encodeURIComponent(selectedMerchantName || "")}`} className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-700">Search</Link>
             </div>
           ) : null}
         </div>
@@ -731,9 +731,9 @@ export default function MerchantManagementBoard({ title = "Merchant Management",
             </div>
 
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <Link href={`/manage-it/search-it?q=${encodeURIComponent(selectedWorkspace.merchant.name)}`} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700">Documents</Link>
-              <Link href={`/manage-it/search-it?q=${encodeURIComponent(selectedWorkspace.merchant.name + " user")}`} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700">Users</Link>
-              <Link href={`/manage-it/search-it?q=${encodeURIComponent(selectedWorkspace.merchant.name + " address")}`} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700">Addresses</Link>
+              <Link href={`/app/manage-it/search-it?q=${encodeURIComponent(selectedWorkspace.merchant.name)}`} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700">Documents</Link>
+              <Link href={`/app/manage-it/search-it?q=${encodeURIComponent(selectedWorkspace.merchant.name + " user")}`} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700">Users</Link>
+              <Link href={`/app/manage-it/search-it?q=${encodeURIComponent(selectedWorkspace.merchant.name + " address")}`} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700">Addresses</Link>
               <Link href={`/settings?companyId=${encodeURIComponent(selectedMerchantId)}`} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-semibold text-slate-700">Settings</Link>
             </div>
           </div>

@@ -17,6 +17,14 @@ type PlatformContextValue = {
   refresh: () => Promise<void>;
   switchContext: (request: SwitchRequest) => Promise<void>;
   signOut: () => Promise<void>;
+  /**
+   * Master Admin "preview as Merchant" read-only mode. Only ever set to true
+   * for platform admins (enforced in setPreviewReadOnly below) - never a
+   * substitute for real permission checks, just a UI-level guard that hides
+   * mutating controls while an admin is looking through a merchant's eyes.
+   */
+  previewReadOnly: boolean;
+  setPreviewReadOnly: (value: boolean) => void;
 };
 
 const PlatformContext = createContext<PlatformContextValue | null>(null);
@@ -37,6 +45,7 @@ export default function PlatformProvider({ children }: { children: ReactNode }) 
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [profile, setProfile] = useState<AccessProfile | null>(null);
   const [activeContext, setActiveContext] = useState<ActiveContext | null>(null);
+  const [previewReadOnly, setPreviewReadOnlyState] = useState(false);
 
   const load = useCallback(async () => {
     if (!supabase) {
@@ -103,9 +112,31 @@ export default function PlatformProvider({ children }: { children: ReactNode }) 
     router.replace("/login");
   }, [router]);
 
+  const setPreviewReadOnly = useCallback(
+    (value: boolean) => {
+      // Only platform admins can ever enter preview mode - anyone else's
+      // request to enable it is silently ignored.
+      if (value && !profile?.isPlatformAdmin) return;
+      setPreviewReadOnlyState(value);
+    },
+    [profile]
+  );
+
   const value = useMemo<PlatformContextValue>(
-    () => ({ loading, error, accessToken, userEmail, profile, activeContext, refresh: load, switchContext, signOut }),
-    [loading, error, accessToken, userEmail, profile, activeContext, load, switchContext, signOut]
+    () => ({
+      loading,
+      error,
+      accessToken,
+      userEmail,
+      profile,
+      activeContext,
+      refresh: load,
+      switchContext,
+      signOut,
+      previewReadOnly,
+      setPreviewReadOnly,
+    }),
+    [loading, error, accessToken, userEmail, profile, activeContext, load, switchContext, signOut, previewReadOnly, setPreviewReadOnly]
   );
 
   return <PlatformContext.Provider value={value}>{children}</PlatformContext.Provider>;

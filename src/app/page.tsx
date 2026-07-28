@@ -13,7 +13,7 @@ import { WorkspaceCardGrid } from "@/components/WorkspaceDesignSystem";
 
 const ALL_NAV_ITEMS = [
   { label: "Manage it", href: "/" },
-  { label: "Create it", href: "/create-it" },
+  { label: "Create it", href: "/app/create-it" },
   { label: "Process it", href: "/process-it" },
   { label: "Track it", href: "/track-it" },
   { label: "Store it", href: "/store-it" },
@@ -27,7 +27,7 @@ const manageItModules = [
   {
     title: "Create it",
     description: "Create new work from any source.",
-    href: "/create-it",
+    href: "/app/create-it",
     icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-7 w-7"><path d="M12 5v14M5 12h14" /></svg>),
   },
   {
@@ -51,14 +51,14 @@ const manageItModules = [
   {
     title: "Document it",
     description: "Manage the complete document-to-delivery workflow.",
-    href: "/manage-it/document-it",
+    href: "/app/manage-it/document-it",
     requiresManageIt: true,
     icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-7 w-7"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>),
   },
   {
     title: "Search it",
     description: "Locate documents, draft jobs and deliveries instantly.",
-    href: "/manage-it/search-it",
+    href: "/app/manage-it/search-it",
     requiresManageIt: true,
     icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-7 w-7"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>),
   },
@@ -89,7 +89,7 @@ const manageItModules = [
   {
     title: "Manage it",
     description: "Oversee operations and performance.",
-    href: "/manage-it",
+    href: "/app/manage-it",
     requiresManageIt: true,
     icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-7 w-7"><rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="3" width="8" height="8" rx="1.5" /><rect x="3" y="13" width="8" height="8" rx="1.5" /><rect x="13" y="13" width="8" height="8" rx="1.5" /></svg>),
   },
@@ -117,7 +117,7 @@ const createItMethods = [
   { title: "Book it", description: "Customer booking forms for fast, structured job requests.", href: "/booking-forms/public", status: "live", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>) },
   { title: "Enter it", description: "Manual job entry for operations teams.", href: "/order-input", status: "live", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" /><path d="M17.5 3.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 8.5-8.5z" /></svg>) },
   { title: "Upload it", description: "Document uploads that convert paperwork into dispatch-ready work.", href: "/portal/documents", status: "live", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>) },
-  { title: "Email it", description: "Convert inbound booking emails into jobs automatically.", href: "/create-it", status: "live", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>) },
+  { title: "Email it", description: "Convert inbound booking emails into jobs automatically.", href: "/app/create-it", status: "live", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>) },
   { title: "Connect it", description: "Use API integrations to push jobs from external systems.", href: "/build-it", status: "live", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><path d="M15 7h4v4" /><path d="M9 17H5v-4" /><path d="M19 7l-6 6" /><path d="M5 13l6-6" /></svg>) },
   { title: "Import it", description: "CSV and spreadsheet imports for batch creation at scale.", href: "/portal/book-it", status: "live", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>) },
   { title: "Embed it", description: "Publish booking forms on your own website.", href: "/booking-forms/embedded", status: "live", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>) },
@@ -132,7 +132,7 @@ const createItMethods = [
 ];
 
 const QUICK_ACTIONS = [
-  { label: "Create new job", href: "/create-it", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5"><path d="M12 5v14M5 12h14" /></svg>) },
+  { label: "Create new job", href: "/app/create-it", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5"><path d="M12 5v14M5 12h14" /></svg>) },
   { label: "View today's jobs", href: "/orders", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>) },
   { label: "Upload document", href: "/portal/documents", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>) },
   { label: "Track a job", href: "/track-it", icon: (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" /><circle cx="12" cy="9" r="2.5" /></svg>) },

@@ -142,7 +142,7 @@ export default function OnboardingPage() {
         <div className="mb-6 text-center sm:text-left">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7C3AED]">Setup</p>
           <h1 className="mt-2 text-2xl font-semibold text-white">Set up your company</h1>
-          <p className="mt-2 text-sm text-slate-400">Enter your company details to get started with NEXUS It Today.</p>
+          <p className="mt-2 text-sm text-slate-400">Enter your company details to get started with Nexus it today.</p>
         </div>
 
         <form className="space-y-5" onSubmit={onSubmit} noValidate>

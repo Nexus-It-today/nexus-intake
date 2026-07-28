@@ -18,6 +18,10 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "NEXUS | Nexus it today",
   description: "Nexus it today is the intelligent transport workspace.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/brand/apple-touch-icon-180x180.png",
+  },
 };
 
 export default function RootLayout({

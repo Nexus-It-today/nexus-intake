@@ -5,11 +5,11 @@ import { MANAGE_IT_ACCESS_COOKIE, MANAGE_IT_SESSION_COOKIE } from "@/lib/manageI
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname === "/manage-it/search-it") {
+  if (pathname === "/manage-it/search-it" || pathname === "/app/manage-it/search-it") {
     return NextResponse.next();
   }
 
-  if (!pathname.startsWith("/manage-it")) {
+  if (!pathname.startsWith("/manage-it") && !pathname.startsWith("/app/manage-it")) {
     return NextResponse.next();
   }
 
@@ -38,5 +38,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/manage-it", "/manage-it/:path*"],
+  matcher: ["/manage-it", "/manage-it/:path*", "/app/manage-it", "/app/manage-it/:path*"],
 };

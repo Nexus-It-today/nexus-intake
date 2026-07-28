@@ -11,7 +11,7 @@ import { usePlatform } from "./PlatformProvider";
  * nothing here is trusted client-side on its own.
  */
 export default function WorkingAsSwitcher() {
-  const { profile, activeContext, switchContext } = usePlatform();
+  const { profile, activeContext, switchContext, previewReadOnly, setPreviewReadOnly } = usePlatform();
   const [open, setOpen] = useState(false);
 
   const label = useMemo(() => {
@@ -50,6 +50,21 @@ export default function WorkingAsSwitcher() {
           role="listbox"
           className="absolute right-0 z-30 mt-2 w-72 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
         >
+          {profile.isPlatformAdmin ? (
+            <label className="flex items-center justify-between gap-2 border-b border-slate-100 bg-slate-50 px-4 py-2.5 text-sm">
+              <span>
+                <span className="font-medium text-slate-900">Preview mode</span>
+                <span className="block text-xs text-slate-400">Read-only, no changes possible</span>
+              </span>
+              <input
+                type="checkbox"
+                checked={previewReadOnly}
+                onChange={(event) => setPreviewReadOnly(event.target.checked)}
+                className="h-4 w-4 rounded border-slate-300"
+              />
+            </label>
+          ) : null}
+
           {profile.isPlatformAdmin ? (
             <button
               type="button"

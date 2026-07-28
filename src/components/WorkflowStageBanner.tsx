@@ -27,7 +27,7 @@ const stageTitles: Record<Stage, string> = {
 };
 
 const stageLinks: Partial<Record<Stage, string>> = {
-  create: "/create-it",
+  create: "/app/create-it",
   process: "/process-it",
   track: "/track-it",
   account: "/account-it",

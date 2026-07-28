@@ -48,12 +48,9 @@ export default function NexusLogo({
 
   if (logoUrl) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={logoUrl} alt={branding?.displayName ?? "Nexus it"} className={`h-8 w-auto ${className}`} />;
+    return <img src={logoUrl} alt={branding?.displayName ?? "Nexus it today"} className={`h-8 w-auto ${className}`} />;
   }
 
-  return (
-    <span className={`text-lg font-bold tracking-tight text-slate-900 ${className}`}>
-      Nexus <span className="text-blue-600">it</span>
-    </span>
-  );
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/brand/nexus-it-today-logo.png" alt="Nexus it today" className={`h-8 w-auto ${className}`} />;
 }

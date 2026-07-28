@@ -10,17 +10,21 @@ import { EmptyState, ErrorState, LoadingState } from "./ui";
 
 type NavItem = { label: string; href: string; comingLater?: boolean; hideForMerchantContext?: boolean };
 
-const NAV_ITEMS: NavItem[] = [
+const PRODUCT_NAV_ITEMS: NavItem[] = [
   { label: "Manage it", href: "/app/manage-it" },
   { label: "Create it", href: "/app/create-it" },
-  { label: "Brand it", href: "/app/brand-it" },
-  { label: "Organisations", href: "/app/organisations", hideForMerchantContext: true },
-  { label: "Merchants", href: "/app/merchants" },
-  { label: "Users", href: "/app/users" },
-  { label: "Integrate it", href: "/app/integrate-it" },
-  { label: "Commercial rules", href: "/app/commercial-it" },
-  { label: "Audit it", href: "/app/audit-it" },
-  { label: "Settings", href: "/app/settings" },
+];
+
+const FOUNDATION_NAV_ITEMS: NavItem[] = [
+  { label: "Dashboard", href: "/app/foundation-it" },
+  { label: "Organisations", href: "/app/foundation-it/organisations", hideForMerchantContext: true },
+  { label: "Merchants", href: "/app/foundation-it/merchants" },
+  { label: "Users", href: "/app/foundation-it/users" },
+  { label: "Brand it", href: "/app/foundation-it/brand-it" },
+  { label: "Integrate it", href: "/app/foundation-it/integrate-it" },
+  { label: "Commercial rules", href: "/app/foundation-it/commercial-it" },
+  { label: "Audit it", href: "/app/foundation-it/audit-it" },
+  { label: "Settings", href: "/app/foundation-it/settings" },
 ];
 
 const COMING_LATER: NavItem[] = [
@@ -79,7 +83,7 @@ function NotificationBell() {
 
 export default function AppShellChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? "";
-  const { loading, error, profile, activeContext } = usePlatform();
+  const { loading, error, profile, activeContext, previewReadOnly, setPreviewReadOnly } = usePlatform();
 
   if (loading) {
     return (
@@ -97,7 +101,13 @@ export default function AppShellChrome({ children }: { children: ReactNode }) {
     );
   }
 
-  const noAccess = profile && !profile.isPlatformAdmin && profile.organisations.length === 0 && profile.merchants.length === 0;
+  // Manage it and Create it are gated by their own legacy cookie-based
+  // entitlement (src/proxy.ts), independent of org/merchant tenancy - ops
+  // staff who use them typically have neither, so the tenancy "no access"
+  // screen below must not apply to these routes.
+  const legacyGatedRoute = pathname.startsWith("/app/manage-it") || pathname.startsWith("/app/create-it");
+  const noAccess =
+    !legacyGatedRoute && profile && !profile.isPlatformAdmin && profile.organisations.length === 0 && profile.merchants.length === 0;
 
   const contextOrganisationId =
     activeContext?.type === "organisation" ? activeContext.id : activeContext?.type === "merchant" ? activeContext.organisationId : null;
@@ -118,10 +128,19 @@ export default function AppShellChrome({ children }: { children: ReactNode }) {
         </div>
       </header>
 
+      {previewReadOnly ? (
+        <div className="sticky top-16 z-10 border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm font-medium text-amber-900 sm:px-6">
+          Previewing as {activeContext && activeContext.type !== "platform" ? activeContext.name : "this context"} — read-only.{" "}
+          <button type="button" onClick={() => setPreviewReadOnly(false)} className="ml-1 underline underline-offset-2 hover:text-amber-950">
+            Exit preview
+          </button>
+        </div>
+      ) : null}
+
       <div className="mx-auto flex max-w-[1400px] gap-6 px-4 py-6 sm:px-6">
         <aside className="hidden w-56 shrink-0 md:block">
           <nav className="sticky top-24 space-y-1">
-            {NAV_ITEMS.filter((item) => !(item.hideForMerchantContext && activeContext?.type === "merchant")).map((item) => {
+            {PRODUCT_NAV_ITEMS.map((item) => {
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
@@ -135,6 +154,23 @@ export default function AppShellChrome({ children }: { children: ReactNode }) {
                 </Link>
               );
             })}
+            <div className="pt-3">
+              <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">Foundation it</p>
+              {FOUNDATION_NAV_ITEMS.filter((item) => !(item.hideForMerchantContext && activeContext?.type === "merchant")).map((item) => {
+                const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`block rounded-lg px-3 py-2 text-sm font-medium transition ${
+                      active ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
             <div className="pt-3">
               <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">Coming later</p>
               {COMING_LATER.map((item) => (

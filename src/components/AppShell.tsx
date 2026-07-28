@@ -13,16 +13,16 @@ const adminNavItems = [
     href: "/dashboard",
     children: [
       { label: "Today's Orders", href: "/orders" },
-      { label: "Organisations", href: "/manage-it?section=companies" },
+      { label: "Organisations", href: "/app/manage-it?section=companies" },
       { label: "Merchants", href: "/merchants" },
       { label: "Integrate it", href: "/integrate-it" },
     ],
   },
   {
     label: "Create it",
-    href: "/create-it",
+    href: "/app/create-it",
     children: [
-      { label: "Create Home", href: "/create-it" },
+      { label: "Create Home", href: "/app/create-it" },
       { label: "Booking Forms", href: "/booking-forms" },
       { label: "Order Input", href: "/order-input" },
     ],
@@ -39,12 +39,12 @@ const adminNavItems = [
   },
   {
     label: "Manage it",
-    href: "/manage-it",
+    href: "/app/manage-it",
     children: [
-      { label: "Organisations", href: "/manage-it?section=companies" },
+      { label: "Organisations", href: "/app/manage-it?section=companies" },
       { label: "Merchants", href: "/merchants" },
-      { label: "Customers", href: "/manage-it?section=customers" },
-      { label: "Search", href: "/manage-it/search-it" },
+      { label: "Customers", href: "/app/manage-it?section=customers" },
+      { label: "Search", href: "/app/manage-it/search-it" },
     ],
   },
   {

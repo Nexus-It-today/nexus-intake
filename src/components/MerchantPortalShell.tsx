@@ -17,7 +17,7 @@ export default function MerchantPortalShell({ children }: MerchantPortalShellPro
 
   useEffect(() => {
     if (typeof document !== "undefined") {
-      document.title = "Workspace access - NEXUS It Today";
+      document.title = "Workspace access - Nexus it today";
     }
   }, []);
 

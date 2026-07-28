@@ -1,10 +1,5 @@
-import AppShell from "@/components/AppShell";
-import MerchantCreateItWorkspace from "@/components/MerchantCreateItWorkspace";
+import { redirect } from "next/navigation";
 
-export default function CreateItPage() {
-  return (
-    <AppShell>
-      <MerchantCreateItWorkspace />
-    </AppShell>
-  );
+export default function CreateItRedirectPage() {
+  redirect("/app/create-it");
 }

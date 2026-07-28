@@ -503,7 +503,7 @@ export default function ManageItControlRoom({ sectionSlug }: { sectionSlug?: Man
         {visibleSections.map((section) => (
           <Link
             key={section.slug}
-            href={`/manage-it/${section.slug}`}
+            href={`/app/manage-it/${section.slug}`}
             className="group flex h-full flex-col rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#7C3AED]/30 hover:shadow-[0_24px_80px_-48px_rgba(124,58,237,0.65)]"
           >
             <div className="flex items-start justify-between gap-3">

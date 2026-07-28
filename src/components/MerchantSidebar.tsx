@@ -77,7 +77,7 @@ export default function MerchantSidebar({ activePath }: MerchantSidebarProps) {
     <aside className="hidden h-screen w-64 flex-col border-r border-slate-200 bg-white lg:flex">
       <div className="flex items-center gap-3 border-b border-slate-200 px-6 py-4">
         <div className="h-8 w-8 rounded-lg bg-[var(--nexus-purple)]" />
-        <span className="font-semibold text-[var(--nexus-graphite)]">NEXUS It Today workspace</span>
+        <span className="font-semibold text-[var(--nexus-graphite)]">Nexus it today workspace</span>
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-6">

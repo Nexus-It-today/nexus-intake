@@ -82,7 +82,7 @@ export default function ModelItPage() {
         <Link href="/portal/documents" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">
           Documents
         </Link>
-        <Link href="/manage-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">
+        <Link href="/app/manage-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">
           Manage It
         </Link>
       </div>

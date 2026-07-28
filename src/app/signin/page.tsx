@@ -90,7 +90,7 @@ export default function SignInPage() {
         const preferredDestination =
           destination === "/"
             ? entryMode === "create"
-              ? "/create-it"
+              ? "/app/create-it"
               : "/"
             : destination;
         router.replace(preferredDestination);
@@ -151,7 +151,7 @@ export default function SignInPage() {
           </div>
           <p className="nexus-kicker">NEXUS It Today</p>
           <div>
-            <h1 className="text-3xl font-semibold text-white">Sign in to NEXUS It Today.</h1>
+            <h1 className="text-3xl font-semibold text-white">Sign in to Nexus it today.</h1>
             <p className="mt-2 text-sm text-slate-300">Nexus Intelligent Transport system</p>
           </div>
         </div>

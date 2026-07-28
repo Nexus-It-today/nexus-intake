@@ -6,10 +6,10 @@ import StandardOrderForm from "@/components/StandardOrderForm";
 import WorkflowStageBanner from "@/components/WorkflowStageBanner";
 
 const workspaceCards = [
-  { title: "Book it", href: "/create-it#new-order", detail: "Manual booking, quick booking, templates and API-driven intake." },
-  { title: "Upload it", href: "/create-it", detail: "Document uploads routed through Create it intake workflow." },
-  { title: "Send it", href: "/create-it", detail: "Email and channel intake orchestration inside Create it." },
-  { title: "Get it", href: "/create-it", detail: "Inbound and return intake managed inside Create it." },
+  { title: "Book it", href: "/app/create-it#new-order", detail: "Manual booking, quick booking, templates and API-driven intake." },
+  { title: "Upload it", href: "/app/create-it", detail: "Document uploads routed through Create it intake workflow." },
+  { title: "Send it", href: "/app/create-it", detail: "Email and channel intake orchestration inside Create it." },
+  { title: "Get it", href: "/app/create-it", detail: "Inbound and return intake managed inside Create it." },
   { title: "Public Forms", href: "/booking-forms/public", detail: "Customer-facing intake forms connected to Create it." },
   { title: "Review Queue", href: "/process-it", detail: "Move new orders into Process it with release controls." },
   { title: "Order History", href: "/portal/orders", detail: "Review live and historical bookings." },

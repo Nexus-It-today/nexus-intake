@@ -257,7 +257,7 @@ export default function SignUpPage() {
         </div>
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7C3AED]">NEXUS It Today</p>
-          <h1 className="mt-1 text-2xl font-semibold text-white">Create your NEXUS It Today account</h1>
+          <h1 className="mt-1 text-2xl font-semibold text-white">Create your Nexus it today account</h1>
           <p className="mt-1 text-sm text-slate-400">
             {inviteMode ? "Customer portal invite" : "Intelligent Transport by Nexus"}
           </p>

@@ -82,10 +82,9 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <div className="mb-8 text-center">
-          <p className="text-2xl font-bold tracking-tight text-slate-900">
-            Nexus <span className="text-blue-600">it</span>
-          </p>
-          <p className="mt-2 text-sm text-slate-500">Sign in to your Nexus it workspace.</p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/nexus-it-today-logo.png" alt="Nexus it today" className="mx-auto h-8 w-auto" />
+          <p className="mt-2 text-sm text-slate-500">Sign in to your Nexus it today workspace.</p>
         </div>
 
         <form className="space-y-4" onSubmit={onSubmit}>

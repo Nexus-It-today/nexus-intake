@@ -64,7 +64,7 @@ export default function MerchantOperationalUploadWorkspace({ title, description 
       <div className="flex flex-wrap gap-2 text-xs font-semibold">
         <Link href="/portal/documents" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Documents</Link>
         <Link href="/process-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Process It</Link>
-        <Link href="/manage-it/search-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Search</Link>
+        <Link href="/app/manage-it/search-it" className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-slate-600 hover:border-slate-300">Search</Link>
       </div>
 
       {loadingProfile ? (

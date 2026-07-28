@@ -33,7 +33,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
         <div className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-[var(--nexus-graphite)] shadow-sm shadow-slate-300/30">
           <span className="font-semibold">Live</span> • updated 2m ago
         </div>
-        <Link href="/manage-it/search-it?q=issue" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm shadow-slate-300/30 hover:bg-slate-50">
+        <Link href="/app/manage-it/search-it?q=issue" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm shadow-slate-300/30 hover:bg-slate-50">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
             <path d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5" />
             <path d="M10 17a2 2 0 104 0" />

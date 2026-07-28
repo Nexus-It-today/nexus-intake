@@ -9,7 +9,7 @@ const channels = [
   },
   {
     title: "Merchant Booking Form",
-    path: "/create-it",
+    path: "/app/create-it",
     detail: "Portal booking flow for merchants using the standard order schema.",
   },
   {

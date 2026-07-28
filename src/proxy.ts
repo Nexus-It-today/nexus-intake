@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { MANAGE_IT_ACCESS_COOKIE, MANAGE_IT_SESSION_COOKIE } from "@/lib/manageIt";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/manage-it/search-it") {
@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
   const canAccessManageIt = request.cookies.get(MANAGE_IT_ACCESS_COOKIE)?.value === "1";
 
   if (!sessionToken) {
-    console.info("[middleware] redirect", {
+    console.info("[proxy] redirect", {
       route: pathname,
       target: "/signin",
       reason: "missing manage-it session cookie",
@@ -26,7 +26,7 @@ export function middleware(request: NextRequest) {
   }
 
   if (!canAccessManageIt) {
-    console.info("[middleware] redirect", {
+    console.info("[proxy] redirect", {
       route: pathname,
       target: "/",
       reason: "manage-it access cookie not granted",

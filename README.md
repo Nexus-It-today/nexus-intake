@@ -86,3 +86,44 @@ The application uses [Supabase](https://supabase.com) for its database. Schema c
 
 - [Supabase CLI documentation](https://supabase.com/docs/reference/cli/introduction)
 - [Supabase migrations guide](https://supabase.com/docs/guides/database/migrations)
+
+## Nexus it platform foundation (Sprint 1 "Foundation it")
+
+Nexus it is being rebuilt as a standalone multi-tenant SaaS platform. The
+canonical hierarchy is:
+
+```
+Nexus it -> Customer organisation -> Merchant -> Users
+```
+
+Every customer is an ordinary organisation created through the app - never
+hard-coded. The full architecture (tenancy model, identity model, roles,
+"Working as" context switching, branding inheritance, RLS strategy, migration
+plan and future-module compatibility) is documented in full at
+[`docs/NEXUS-IT-PLATFORM-1.0-ARCHITECTURE.md`](docs/NEXUS-IT-PLATFORM-1.0-ARCHITECTURE.md).
+
+### What's new
+
+- `/login` - canonical sign-in for the new foundation shell.
+- `/app/*` - the Sprint 1 application shell: Manage it, Create it, Brand it,
+  Organisations, Merchants, Users, Audit it, Settings.
+- `src/lib/platform/*` - server-verified access profile, "Working as" context
+  resolution, audit logging and branding inheritance helpers.
+- `src/app/api/platform/*` - the API surface backing the above.
+
+### Environment variables
+
+Copy `.env.example` to `.env.local` and fill in your own Supabase project
+values. No new environment variables were introduced by Sprint 1 - the
+foundation reuses the existing `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or `NEXT_PUBLIC_SUPABASE_ANON_KEY`) and
+`SUPABASE_SECRET_KEY` (or `SUPABASE_SERVICE_ROLE_KEY`) variables.
+
+### Development seed data
+
+`supabase/seed_dev_foundation.sql` seeds two clearly-fictional example
+organisations and merchants for local development only - never run it
+against a production database, and never add real customer names to it.
+Membership rows are deliberately not seeded by script; see the comments in
+that file for why, and how to create them through the app's own invite flow
+instead.

@@ -7,7 +7,7 @@ import AccessSetupIssueView from "@/components/AccessSetupIssueView";
 import { syncManageItSession } from "@/lib/manageIt";
 import { getSupabaseProjectRefFromUrl, supabase } from "@/lib/supabaseClient";
 
-const PUBLIC_PATHS = new Set(["/signin", "/signup", "/forgot-password", "/reset-password"]);
+const PUBLIC_PATHS = new Set(["/signin", "/signup", "/login", "/forgot-password", "/reset-password"]);
 
 function isPublicRoute(pathname: string): boolean {
   return (
@@ -15,7 +15,12 @@ function isPublicRoute(pathname: string): boolean {
     pathname === "/manage-it/search-it" ||
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/order-input") ||
-    pathname === "/booking-forms"
+    pathname === "/booking-forms" ||
+    // The Sprint 1 "Foundation it" application shell (/app/*) manages its own
+    // auth guard (see src/app/app/layout.tsx) against the new organisation /
+    // merchant membership model, independently of this legacy profile-based
+    // gate - so it is intentionally excluded here rather than adapted.
+    pathname.startsWith("/app")
   );
 }
 

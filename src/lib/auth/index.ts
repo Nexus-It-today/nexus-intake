@@ -192,14 +192,14 @@ export async function getMerchantSession(
   // for this user that belongs to an organisation matching the legacy companyId.
   //
   // Done as two separate queries rather than a PostgREST joined filter because
-  // the dot-notation form (.eq("merchants.organisation_id", ...)) may not be
+  // the dot-notation form (.eq("merchants.company_id", ...)) may not be
   // applied server-side for a joined table, which would cause cross-tenant
   // merchant IDs to be returned.
   let merchantId: string | null = null;
   const { data: orgMerchants } = await privilegedClient
     .from("merchants")
     .select("id")
-    .eq("organisation_id", companyId)
+    .eq("company_id", companyId)
     .eq("status", "active");
 
   const orgMerchantIds = (orgMerchants ?? []).map((m: { id: string }) => m.id);

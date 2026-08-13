@@ -2,12 +2,12 @@
 --
 -- Phase A of the company_id → merchant_id migration:
 --   1. Add nullable merchant_id FK to every operational table that still only
---      carries company_id / organisation_id as its tenancy key.
---   2. Backfill: for each row, derive merchant_id by selecting the first
---      merchant whose organisation_id equals the row's company_id.  This is
---      best-effort — rows belonging to organisations with no merchant yet
---      remain NULL and are still visible through the company_id → can_access_organisation()
---      path in the RLS policies added in 20260813002000.
+--      carries company_id as its tenancy key.
+--   2. Backfill: for each row, set merchant_id only when exactly ONE merchant
+--      exists for that company_id (HAVING COUNT(*) = 1).  Rows whose company
+--      has zero or multiple merchants are left NULL intentionally — they remain
+--      accessible via the company_id → can_access_organisation() RLS path
+--      added in 20260813002000.
 --   3. Add covering indexes.
 --
 -- company_id columns are NOT removed here; application code still reads them.
@@ -31,10 +31,10 @@ ALTER TABLE public.draft_jobs
 
 UPDATE public.draft_jobs dj
 SET merchant_id = (
-  SELECT m.id
+  SELECT MIN(m.id)
   FROM public.merchants m
   WHERE m.company_id = dj.company_id
-  LIMIT 1
+  HAVING COUNT(*) = 1
 )
 WHERE dj.merchant_id IS NULL;
 
@@ -49,10 +49,10 @@ ALTER TABLE public.merchant_customers
 
 UPDATE public.merchant_customers mc
 SET merchant_id = (
-  SELECT m.id
+  SELECT MIN(m.id)
   FROM public.merchants m
   WHERE m.company_id = mc.company_id
-  LIMIT 1
+  HAVING COUNT(*) = 1
 )
 WHERE mc.merchant_id IS NULL;
 
@@ -67,10 +67,10 @@ ALTER TABLE public.merchant_customer_invitations
 
 UPDATE public.merchant_customer_invitations mci
 SET merchant_id = (
-  SELECT m.id
+  SELECT MIN(m.id)
   FROM public.merchants m
   WHERE m.company_id = mci.company_id
-  LIMIT 1
+  HAVING COUNT(*) = 1
 )
 WHERE mci.merchant_id IS NULL;
 
@@ -87,10 +87,10 @@ ALTER TABLE public.merchant_collection_profiles
 
 UPDATE public.merchant_collection_profiles mcp
 SET merchant_id = (
-  SELECT m.id
+  SELECT MIN(m.id)
   FROM public.merchants m
   WHERE m.company_id = mcp.company_id
-  LIMIT 1
+  HAVING COUNT(*) = 1
 )
 WHERE mcp.merchant_id IS NULL;
 
@@ -105,10 +105,10 @@ ALTER TABLE public.merchant_integration_connections
 
 UPDATE public.merchant_integration_connections mic
 SET merchant_id = (
-  SELECT m.id
+  SELECT MIN(m.id)
   FROM public.merchants m
   WHERE m.company_id = mic.company_id
-  LIMIT 1
+  HAVING COUNT(*) = 1
 )
 WHERE mic.merchant_id IS NULL;
 
@@ -123,10 +123,10 @@ ALTER TABLE public.sales_channels
 
 UPDATE public.sales_channels sc
 SET merchant_id = (
-  SELECT m.id
+  SELECT MIN(m.id)
   FROM public.merchants m
   WHERE m.company_id = sc.company_id
-  LIMIT 1
+  HAVING COUNT(*) = 1
 )
 WHERE sc.merchant_id IS NULL;
 
@@ -141,10 +141,10 @@ ALTER TABLE public.merchant_customer_booking_profiles
 
 UPDATE public.merchant_customer_booking_profiles mcbp
 SET merchant_id = (
-  SELECT m.id
+  SELECT MIN(m.id)
   FROM public.merchants m
   WHERE m.company_id = mcbp.company_id
-  LIMIT 1
+  HAVING COUNT(*) = 1
 )
 WHERE mcbp.merchant_id IS NULL;
 
@@ -159,10 +159,10 @@ ALTER TABLE public.uploaded_documents
 
 UPDATE public.uploaded_documents ud
 SET merchant_id = (
-  SELECT m.id
+  SELECT MIN(m.id)
   FROM public.merchants m
   WHERE m.company_id = ud.company_id
-  LIMIT 1
+  HAVING COUNT(*) = 1
 )
 WHERE ud.merchant_id IS NULL;
 

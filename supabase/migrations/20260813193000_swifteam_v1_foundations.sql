@@ -15,6 +15,9 @@ CREATE TABLE IF NOT EXISTS public.swifteam_channel_identities (
 
 CREATE INDEX IF NOT EXISTS idx_swifteam_channel_identities_merchant_id
   ON public.swifteam_channel_identities(merchant_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_swifteam_channel_identities_global_unique
+  ON public.swifteam_channel_identities(channel, identity_value)
+  WHERE merchant_id IS NULL;
 
 DROP TRIGGER IF EXISTS swifteam_channel_identities_set_updated_at ON public.swifteam_channel_identities;
 CREATE TRIGGER swifteam_channel_identities_set_updated_at
@@ -204,10 +207,24 @@ WHERE lower(COALESCE(u.email, '')) = lower('swift@nexus.delivery')
 ON CONFLICT (user_id, role_id) DO NOTHING;
 
 INSERT INTO public.swifteam_channel_identities (merchant_id, channel, identity_value, label, is_active)
-VALUES
-  (NULL, 'email', 'swift@nexus.delivery', 'Swifteam master email', TRUE),
-  (NULL, 'phone', '0113 479 0208', 'Swifteam CircleLoop', TRUE)
-ON CONFLICT (merchant_id, channel, identity_value) DO NOTHING;
+SELECT NULL, 'email', 'swift@nexus.delivery', 'Swifteam master email', TRUE
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM public.swifteam_channel_identities
+  WHERE merchant_id IS NULL
+    AND channel = 'email'
+    AND identity_value = 'swift@nexus.delivery'
+);
+
+INSERT INTO public.swifteam_channel_identities (merchant_id, channel, identity_value, label, is_active)
+SELECT NULL, 'phone', '0113 479 0208', 'Swifteam CircleLoop', TRUE
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM public.swifteam_channel_identities
+  WHERE merchant_id IS NULL
+    AND channel = 'phone'
+    AND identity_value = '0113 479 0208'
+);
 
 INSERT INTO public.merchant_usage_plans (
   merchant_id,

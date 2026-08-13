@@ -103,7 +103,9 @@ export type CustomerSession = {
 };
 
 // ---------------------------------------------------------------------------
-// Role normalisation (kept in sync with legacy serverAuth.ts until removed)
+// Role normalisation (British spelling used consistently in new code; the
+// legacy normalizeProfileRole export in src/lib/serverAuth.ts keeps its
+// original American spelling for backward compat until Sprint 3 removes it)
 // ---------------------------------------------------------------------------
 
 export function normaliseProfileRole(role: unknown): string {
@@ -186,18 +188,34 @@ export async function getMerchantSession(
 
   const companyId = profile.company_id;
 
-  // Resolve canonical merchantId: the first active merchant_membership for
-  // this user that belongs to an organisation matching the legacy companyId.
-  const { data: merchantRow } = await privilegedClient
-    .from("merchant_memberships")
-    .select("merchant_id, merchants!inner(organisation_id)")
-    .eq("user_id", user.id)
-    .eq("status", "active")
-    .eq("merchants.organisation_id", companyId)
-    .limit(1)
-    .maybeSingle<{ merchant_id: string }>();
+  // Resolve canonical merchantId: find the first active merchant_membership
+  // for this user that belongs to an organisation matching the legacy companyId.
+  //
+  // Done as two separate queries rather than a PostgREST joined filter because
+  // the dot-notation form (.eq("merchants.organisation_id", ...)) may not be
+  // applied server-side for a joined table, which would cause cross-tenant
+  // merchant IDs to be returned.
+  let merchantId: string | null = null;
+  const { data: orgMerchants } = await privilegedClient
+    .from("merchants")
+    .select("id")
+    .eq("organisation_id", companyId)
+    .eq("status", "active");
 
-  const merchantId = merchantRow?.merchant_id ?? null;
+  const orgMerchantIds = (orgMerchants ?? []).map((m: { id: string }) => m.id);
+
+  if (orgMerchantIds.length > 0) {
+    const { data: membershipRow } = await privilegedClient
+      .from("merchant_memberships")
+      .select("merchant_id")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .in("merchant_id", orgMerchantIds)
+      .limit(1)
+      .maybeSingle<{ merchant_id: string }>();
+
+    merchantId = membershipRow?.merchant_id ?? null;
+  }
 
   return {
     ok: true,

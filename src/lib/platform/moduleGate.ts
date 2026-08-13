@@ -80,7 +80,6 @@ export function requireModule(
         return NextResponse.json(
           {
             error: "Module not enabled",
-            moduleKey,
             code: "MODULE_NOT_ENABLED",
           },
           { status: 402 }

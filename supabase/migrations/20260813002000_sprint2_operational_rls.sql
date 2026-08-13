@@ -26,6 +26,14 @@
 -- explicit .rpc('bypass_rls_...') or use the admin API for bulk ops.
 -- The privilegedClient in supabaseServer.ts is intentionally NOT given
 -- a special bypass; it must pass permission checks like any other caller.
+--
+-- NOTE: No DELETE policies are defined.  Deletes on operational records are
+-- intentionally prohibited through the normal application path — records are
+-- soft-deleted by updating a status column (e.g. archived_at, status='archived').
+-- Hard deletion, where it is ever needed, must be performed by a privileged
+-- database operator directly, not through the app API.  Any table that later
+-- legitimately needs a DELETE path (e.g. draft_jobs pruning by a scheduled job)
+-- should add an explicit DELETE policy in a subsequent migration, not here.
 
 -- ---------------------------------------------------------------------------
 -- Helper macro (inline): the standard three-tier USING clause

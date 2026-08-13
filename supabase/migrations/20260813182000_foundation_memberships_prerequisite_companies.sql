@@ -275,7 +275,7 @@ AS $$
     SELECT 1
     FROM public.merchants m
     WHERE m.id = target_merchant_id
-      AND public.has_organisation_role(m.company_id, ARRAY['organisation_owner', 'organisation_admin'])
+      AND public.can_manage_organisation(m.company_id)
   );
 $$;
 
@@ -381,6 +381,14 @@ BEGIN
 
   IF to_regprocedure('public.can_access_merchant(uuid)') IS NULL THEN
     RAISE EXCEPTION 'Missing required helper after migration: public.can_access_merchant(UUID)';
+  END IF;
+
+  IF to_regprocedure('public.can_manage_organisation(uuid)') IS NULL THEN
+    RAISE EXCEPTION 'Missing required helper after migration: public.can_manage_organisation(UUID)';
+  END IF;
+
+  IF to_regprocedure('public.can_manage_merchant(uuid)') IS NULL THEN
+    RAISE EXCEPTION 'Missing required helper after migration: public.can_manage_merchant(UUID)';
   END IF;
 END
 $$;

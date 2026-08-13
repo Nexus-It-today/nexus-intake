@@ -31,10 +31,10 @@ ALTER TABLE public.draft_jobs
 
 UPDATE public.draft_jobs dj
 SET merchant_id = (
-  SELECT MIN(m.id)
+  SELECT m.id
   FROM public.merchants m
   WHERE m.company_id = dj.company_id
-  HAVING COUNT(*) = 1
+  AND (SELECT COUNT(*) FROM public.merchants m2 WHERE m2.company_id = dj.company_id) = 1
 )
 WHERE dj.merchant_id IS NULL;
 
@@ -49,10 +49,10 @@ ALTER TABLE public.merchant_customers
 
 UPDATE public.merchant_customers mc
 SET merchant_id = (
-  SELECT MIN(m.id)
+  SELECT m.id
   FROM public.merchants m
   WHERE m.company_id = mc.company_id
-  HAVING COUNT(*) = 1
+  AND (SELECT COUNT(*) FROM public.merchants m2 WHERE m2.company_id = mc.company_id) = 1
 )
 WHERE mc.merchant_id IS NULL;
 
@@ -67,10 +67,10 @@ ALTER TABLE public.merchant_customer_invitations
 
 UPDATE public.merchant_customer_invitations mci
 SET merchant_id = (
-  SELECT MIN(m.id)
+  SELECT m.id
   FROM public.merchants m
   WHERE m.company_id = mci.company_id
-  HAVING COUNT(*) = 1
+  AND (SELECT COUNT(*) FROM public.merchants m2 WHERE m2.company_id = mci.company_id) = 1
 )
 WHERE mci.merchant_id IS NULL;
 
@@ -87,10 +87,10 @@ ALTER TABLE public.merchant_collection_profiles
 
 UPDATE public.merchant_collection_profiles mcp
 SET merchant_id = (
-  SELECT MIN(m.id)
+  SELECT m.id
   FROM public.merchants m
   WHERE m.company_id = mcp.company_id
-  HAVING COUNT(*) = 1
+  AND (SELECT COUNT(*) FROM public.merchants m2 WHERE m2.company_id = mcp.company_id) = 1
 )
 WHERE mcp.merchant_id IS NULL;
 
@@ -105,10 +105,10 @@ ALTER TABLE public.merchant_integration_connections
 
 UPDATE public.merchant_integration_connections mic
 SET merchant_id = (
-  SELECT MIN(m.id)
+  SELECT m.id
   FROM public.merchants m
   WHERE m.company_id = mic.company_id
-  HAVING COUNT(*) = 1
+  AND (SELECT COUNT(*) FROM public.merchants m2 WHERE m2.company_id = mic.company_id) = 1
 )
 WHERE mic.merchant_id IS NULL;
 
@@ -123,10 +123,10 @@ ALTER TABLE public.sales_channels
 
 UPDATE public.sales_channels sc
 SET merchant_id = (
-  SELECT MIN(m.id)
+  SELECT m.id
   FROM public.merchants m
   WHERE m.company_id = sc.company_id
-  HAVING COUNT(*) = 1
+  AND (SELECT COUNT(*) FROM public.merchants m2 WHERE m2.company_id = sc.company_id) = 1
 )
 WHERE sc.merchant_id IS NULL;
 
@@ -141,10 +141,10 @@ ALTER TABLE public.merchant_customer_booking_profiles
 
 UPDATE public.merchant_customer_booking_profiles mcbp
 SET merchant_id = (
-  SELECT MIN(m.id)
+  SELECT m.id
   FROM public.merchants m
   WHERE m.company_id = mcbp.company_id
-  HAVING COUNT(*) = 1
+  AND (SELECT COUNT(*) FROM public.merchants m2 WHERE m2.company_id = mcbp.company_id) = 1
 )
 WHERE mcbp.merchant_id IS NULL;
 
@@ -159,10 +159,10 @@ ALTER TABLE public.uploaded_documents
 
 UPDATE public.uploaded_documents ud
 SET merchant_id = (
-  SELECT MIN(m.id)
+  SELECT m.id
   FROM public.merchants m
   WHERE m.company_id = ud.company_id
-  HAVING COUNT(*) = 1
+  AND (SELECT COUNT(*) FROM public.merchants m2 WHERE m2.company_id = ud.company_id) = 1
 )
 WHERE ud.merchant_id IS NULL;
 

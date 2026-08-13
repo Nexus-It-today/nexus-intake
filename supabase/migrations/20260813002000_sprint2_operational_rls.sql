@@ -21,11 +21,14 @@
 -- code migration and backfill is verified, the company_id fallback can be
 -- removed from the SELECT policy in a follow-up migration.
 --
--- These policies use FORCE ROW LEVEL SECURITY so the service-role client
--- is NOT exempt — service-role queries inside Route Handlers must issue
--- explicit .rpc('bypass_rls_...') or use the admin API for bulk ops.
--- The privilegedClient in supabaseServer.ts is intentionally NOT given
--- a special bypass; it must pass permission checks like any other caller.
+-- These policies use FORCE ROW LEVEL SECURITY so the table owner cannot
+-- bypass them.  Note: Supabase's service_role database role carries the
+-- PostgreSQL BYPASSRLS attribute; FORCE ROW LEVEL SECURITY does NOT remove
+-- that bypass (PostgreSQL docs: "FORCE ROW LEVEL SECURITY does not affect
+-- privileges granted to users who have the BYPASSRLS privilege").
+-- Service-role Route Handlers therefore retain their existing DELETE/admin
+-- access without needing a special override.  Application-code callers
+-- using the anon / authenticated role are fully subject to these policies.
 --
 -- NOTE: No DELETE policies are defined.  Deletes on operational records are
 -- intentionally prohibited through the normal application path — records are

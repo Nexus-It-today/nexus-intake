@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPlatformContext } from "@/lib/platform/requestContext";
+import { requireModule } from "@/lib/platform/moduleGate";
 import { canAccessMerchant } from "@/lib/platform/permissions";
 
 type OrderRow = {
@@ -21,12 +21,7 @@ type OrderRow = {
   updated_at: string;
 };
 
-export async function GET(request: NextRequest) {
-  const ctx = await getPlatformContext(request);
-  if (!ctx.ok) {
-    return NextResponse.json({ error: ctx.error }, { status: ctx.status });
-  }
-
+export const GET = requireModule("track_it", async (request: NextRequest, ctx) => {
   const requestedMerchantId = (request.nextUrl.searchParams.get("merchantId") ?? "").trim();
   const contextMerchantId = ctx.activeContext.type === "merchant" ? ctx.activeContext.id : "";
   const merchantId = requestedMerchantId || contextMerchantId;
@@ -84,4 +79,4 @@ export async function GET(request: NextRequest) {
         updatedAt: row.updated_at,
       })) ?? [],
   });
-}
+});

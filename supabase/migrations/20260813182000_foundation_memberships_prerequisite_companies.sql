@@ -292,7 +292,7 @@ DROP POLICY IF EXISTS merchants_insert ON public.merchants;
 CREATE POLICY merchants_insert
 ON public.merchants
 FOR INSERT
-WITH CHECK (public.can_manage_organisation(company_id));
+WITH CHECK (public.can_manage_organisation(organisation_id));
 
 DROP POLICY IF EXISTS merchants_update ON public.merchants;
 CREATE POLICY merchants_update

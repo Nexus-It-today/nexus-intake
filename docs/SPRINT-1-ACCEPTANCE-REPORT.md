@@ -33,11 +33,11 @@ and re-verified below.
 2. **Merchant-level branding silently skipped the organisation inheritance
    layer** when only a `merchantId` was supplied (the exact case the header,
    hosted booking forms, and embeds will use in practice). Root cause: the
-   route resolved the merchant's parent `organisation_id` using the
+  route resolved the merchant's parent `company_id` using the
    anon-key client, but `merchants` RLS blocks anonymous reads, so the lookup
    silently returned nothing and the chain fell straight from merchant to
    platform, skipping the organisation's own branding. **Fixed**: that one
-   internal lookup (merchant → its `organisation_id`, never merchant data
+  internal lookup (merchant → its `company_id`, never merchant data
    itself) now uses the service-role client. Verified live: a merchant with
    its own colour override now correctly shows its own colour, its parent
    organisation's display name, and the platform's accent colour, all three

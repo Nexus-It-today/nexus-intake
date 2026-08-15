@@ -22,13 +22,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const { data: merchant } = await privilegedClient
     .from("merchants")
-    .select("id, organisation_id")
+    .select("id, company_id")
     .eq("id", merchantId)
     .maybeSingle();
   if (!merchant) {
     return NextResponse.json({ error: "Merchant not found." }, { status: 404 });
   }
-  if (!canAccessMerchant(result.value, merchantId, merchant.organisation_id)) {
+  if (!canAccessMerchant(result.value, merchantId, merchant.company_id)) {
     return NextResponse.json({ error: "You do not have access to this merchant." }, { status: 403 });
   }
 
@@ -67,13 +67,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   const { data: merchant } = await privilegedClient
     .from("merchants")
-    .select("id, organisation_id")
+    .select("id, company_id")
     .eq("id", merchantId)
     .maybeSingle();
   if (!merchant) {
     return NextResponse.json({ error: "Merchant not found." }, { status: 404 });
   }
-  if (!canManageMerchant(result.value, merchantId, merchant.organisation_id)) {
+  if (!canManageMerchant(result.value, merchantId, merchant.company_id)) {
     return NextResponse.json({ error: "You do not have permission to invite members to this merchant." }, { status: 403 });
   }
 
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   await recordAuditEvent(privilegedClient, {
     actorUserId: result.value.userId,
-    organisationId: merchant.organisation_id,
+    organisationId: merchant.company_id,
     merchantId,
     action: "membership.created",
     entityType: "merchant_membership",

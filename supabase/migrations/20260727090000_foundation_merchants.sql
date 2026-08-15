@@ -1,15 +1,15 @@
 -- Sprint 1 "Foundation it": canonical merchant entity.
 --
--- Introduces `merchants` as a first-class child of `organisations`, per the
--- canonical hierarchy: Nexus it -> Customer organisation -> Merchant -> Users.
--- An organisation may own zero or more merchants. This table intentionally
+-- Introduces `merchants` as a first-class child of `companies`, per the
+-- canonical hierarchy: Nexus it -> Company -> Merchant -> Users.
+-- A company may own zero or more merchants. This table intentionally
 -- does not touch any existing operational table (draft_jobs, catalogue, etc.)
 -- - those continue to use company_id/organisation_id until a future sprint
 -- migrates them onto merchant_id.
 
 CREATE TABLE IF NOT EXISTS public.merchants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organisation_id UUID NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
+  company_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   trading_name TEXT,
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'suspended', 'archived')),
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS public.merchants (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_merchants_organisation_id ON public.merchants (organisation_id);
+CREATE INDEX IF NOT EXISTS idx_merchants_company_id ON public.merchants (company_id);
 CREATE INDEX IF NOT EXISTS idx_merchants_status ON public.merchants (status);
 
 DROP TRIGGER IF EXISTS merchants_set_updated_at ON public.merchants;

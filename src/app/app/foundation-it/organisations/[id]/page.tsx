@@ -27,7 +27,6 @@ import {
 type OrganisationDetail = {
   organisation: {
     id: string;
-    slug: string;
     name: string;
     trading_name: string | null;
     status: "active" | "suspended" | "archived";

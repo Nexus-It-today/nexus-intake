@@ -36,21 +36,22 @@ here.
 
 ```
 Nexus it
-  -> organisations        (tenant root — a customer organisation)
-       -> merchants        (a business the organisation operates)
+  -> companies            (subscribing tenant)
+       -> merchants        (a customer/account belonging to the company)
             -> users        (via merchant_memberships)
-       -> users             (via organisation_memberships)
+       -> users             (via organisation_memberships compatibility API)
 ```
 
-- **`organisations`** is the tenant root. It already existed
-  (`20260706103000_organisation_foundation.sql`) and is reused as-is —
-  `id`, `slug`, `name`, `trading_name`, `status` (`active`/`suspended`/`archived`),
-  timestamps.
+- **`companies`** is the canonical subscribing tenant. Its `id` is the tenant
+  key used by profiles, merchants, and operational `company_id` columns.
+- **`organisations`** remains available for legacy compatibility and the
+  organisation-named Foundation APIs. It is not removed or redesigned, but it
+  is not the canonical merchant ownership key.
 - **`merchants`** is new this sprint
   (`20260727090000_foundation_merchants.sql`). Every merchant has exactly one
-  `organisation_id` (`NOT NULL`, `ON DELETE CASCADE`) and its own
-  `active`/`suspended`/`archived` status. An organisation may have zero, one,
-  or many merchants.
+  `company_id` (`NOT NULL`, FK to `companies.id`, `ON DELETE CASCADE`) and its
+  own `active`/`suspended`/`archived` status. A company may have zero, one, or
+  many merchants.
 - Nothing is hard-coded: organisations and merchants are created only through
   `POST /api/platform/organisations` and
   `POST /api/platform/organisations/:id/merchants`, both gated to the
@@ -59,11 +60,10 @@ Nexus it
   a `DELETE`. Neither `organisations` nor `merchants` has a `DELETE` RLS
   policy or a DELETE API route — hard deletion of tenant records isn't
   possible through the app.
-- Future operational records (in later sprints) carry `organisation_id`, and
-  merchant-owned records additionally carry `merchant_id`, exactly as the
-  brief specifies. This sprint does not retrofit that onto existing
-  operational tables (`draft_jobs`, `merchant_catalogue_items`, etc.) — see
-  §10 and §17.
+- Operational records retain `company_id`. Where a row also carries
+  `merchant_id`, tenancy is valid only when `merchants.id = merchant_id` and
+  `merchants.company_id = operational_row.company_id`. RLS enforces both the
+  membership permission and this company/merchant pairing.
 
 ## 3. Canonical identity model
 
@@ -107,8 +107,8 @@ This directly satisfies the brief's hierarchy rules:
   organisations (multiple `merchant_memberships` rows).
 - A user may have a different role in each context — role lives on the
   membership row, never on the user or the profile.
-- Merchant data always belongs to an organisation (`merchants.organisation_id`
-  is `NOT NULL`); a merchant membership does not imply organisation
+- Merchant data always belongs to a company (`merchants.company_id` is
+  `NOT NULL`); a merchant membership does not imply organisation
   membership, and vice versa (an organisation admin can manage a merchant
   under their organisation without an explicit `merchant_memberships` row,
   via the role-inheritance rule in §5 — but that is a permission check, not
@@ -335,15 +335,11 @@ destructive. Every new migration uses `IF NOT EXISTS`/`ON CONFLICT DO
 NOTHING`/`DO UPDATE`, so re-running them is safe and no existing row is ever
 overwritten with data it didn't already have.
 
-**Why not migrate operational tables now**: `draft_jobs` alone has ~90
-columns and zero RLS (a known, separate risk — see the prior audit and §18);
-`merchant_catalogue_items`, `sales_channels`, and others have no RLS either.
-Retrofitting `merchant_id`/`organisation_id`-based access onto them, safely,
-requires understanding each operational workflow in depth — that is squarely
-"Catalogue it"/"Book it"/"Process it" work the brief explicitly excludes from
-this sprint. Attempting it here would both violate that scope boundary and
-risk breaking a live operational surface this sprint has no test coverage
-for.
+**Operational retrofit**: Sprint 2 adds `merchant_id` without removing the
+existing operational `company_id`. Backfills select a merchant only when the
+company has exactly one merchant. RLS permits merchant-scoped access only when
+the referenced merchant's `company_id` equals the row's `company_id`; rows not
+yet mapped to a merchant retain the existing company-scoped policy path.
 
 **The path for a future sprint** (recorded here so it isn't lost):
 1. Add `merchant_id` (nullable at first) to the operational tables that need
@@ -352,8 +348,8 @@ for.
 2. Enable RLS on those tables using the same `can_access_merchant()`/
    `can_access_organisation()` functions this sprint already built.
 3. Once application code is verified against the new columns and policies in
-   a staging environment, make the new columns `NOT NULL` and retire the
-   `company_id`-only code paths.
+  a staging environment, make required `merchant_id` columns `NOT NULL` while
+  preserving operational `company_id` for cross-tenant consistency checks.
 4. Only then consider dropping `organisation_users`, `customer_portal_users`,
    and `profiles.role` as authorization inputs (see §17).
 

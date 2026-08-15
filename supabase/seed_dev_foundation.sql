@@ -16,13 +16,24 @@ VALUES
   ('sample-logistics-group', 'Sample Logistics Group Ltd', NULL, 'active', 'dev-seed')
 ON CONFLICT (slug) DO NOTHING;
 
-INSERT INTO public.merchants (organisation_id, name, trading_name, status)
+INSERT INTO public.companies (id, organisation_id, name, trading_name, status, source_system)
+SELECT o.id, o.id, o.name, o.trading_name, o.status, 'dev-seed'
+FROM public.organisations o
+WHERE o.slug IN ('example-organisation', 'sample-logistics-group')
+ON CONFLICT (id) DO UPDATE
+SET organisation_id = EXCLUDED.organisation_id,
+    name = EXCLUDED.name,
+    trading_name = EXCLUDED.trading_name,
+    status = EXCLUDED.status,
+    source_system = EXCLUDED.source_system;
+
+INSERT INTO public.merchants (company_id, name, trading_name, status)
 SELECT o.id, 'Example Merchant Co', 'Example Merchant', 'active'
 FROM public.organisations o
 WHERE o.slug = 'example-organisation'
 ON CONFLICT DO NOTHING;
 
-INSERT INTO public.merchants (organisation_id, name, trading_name, status)
+INSERT INTO public.merchants (company_id, name, trading_name, status)
 SELECT o.id, 'Sample Retail Merchant', NULL, 'active'
 FROM public.organisations o
 WHERE o.slug = 'sample-logistics-group'

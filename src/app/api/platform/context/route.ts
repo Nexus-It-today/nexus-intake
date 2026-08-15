@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
   if (privilegedClient) {
     await recordAuditEvent(privilegedClient, {
       actorUserId: result.value.userId,
-      organisationId: activeContext.type === "organisation" ? activeContext.id : activeContext.type === "merchant" ? activeContext.organisationId : null,
+      organisationId: activeContext.type === "organisation" ? activeContext.id : activeContext.type === "merchant" ? activeContext.companyId : null,
       merchantId: activeContext.type === "merchant" ? activeContext.id : null,
       action: "context.switched",
       entityType: activeContext.type,

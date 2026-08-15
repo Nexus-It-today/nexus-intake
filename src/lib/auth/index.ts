@@ -70,8 +70,7 @@ export type ServerSession = {
 /**
  * Operator/merchant session — returned by getMerchantSession.
  *
- * companyId    — legacy field; equals the organisation UUID from profiles.company_id.
- *                Kept for backward compat with existing Route Handler code.
+ * companyId    — canonical tenant UUID from profiles.company_id.
  * merchantId   — canonical field; the first merchant_id the user holds an
  *                active membership for under this organisation.  May be null
  *                if no canonical merchant has been set up yet for this tenant.
@@ -175,7 +174,7 @@ export async function getMerchantSession(
 
   const { user } = sessionResult;
 
-  // Resolve companyId from legacy profiles table (unchanged during Sprint 2).
+  // Resolve the canonical company tenant from the user's profile.
   const { data: profile, error: profileError } = await privilegedClient
     .from("profiles")
     .select("id, company_id, role")
@@ -189,28 +188,28 @@ export async function getMerchantSession(
   const companyId = profile.company_id;
 
   // Resolve canonical merchantId: find the first active merchant_membership
-  // for this user that belongs to an organisation matching the legacy companyId.
+  // for this user that belongs to the same canonical company.
   //
   // Done as two separate queries rather than a PostgREST joined filter because
-  // the dot-notation form (.eq("merchants.organisation_id", ...)) may not be
+  // the dot-notation form (.eq("merchants.company_id", ...)) may not be
   // applied server-side for a joined table, which would cause cross-tenant
   // merchant IDs to be returned.
   let merchantId: string | null = null;
-  const { data: orgMerchants } = await privilegedClient
+  const { data: companyMerchants } = await privilegedClient
     .from("merchants")
     .select("id")
-    .eq("organisation_id", companyId)
+    .eq("company_id", companyId)
     .eq("status", "active");
 
-  const orgMerchantIds = (orgMerchants ?? []).map((m: { id: string }) => m.id);
+  const companyMerchantIds = (companyMerchants ?? []).map((merchant: { id: string }) => merchant.id);
 
-  if (orgMerchantIds.length > 0) {
+  if (companyMerchantIds.length > 0) {
     const { data: membershipRow } = await privilegedClient
       .from("merchant_memberships")
       .select("merchant_id")
       .eq("user_id", user.id)
       .eq("status", "active")
-      .in("merchant_id", orgMerchantIds)
+      .in("merchant_id", companyMerchantIds)
       .limit(1)
       .maybeSingle<{ merchant_id: string }>();
 

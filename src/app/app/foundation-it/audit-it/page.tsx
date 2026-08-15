@@ -25,7 +25,7 @@ export default function AuditItPage() {
   if (activeContext?.type === "organisation") params.set("organisationId", activeContext.id);
   if (activeContext?.type === "merchant") {
     params.set("merchantId", activeContext.id);
-    params.set("organisationId", activeContext.organisationId);
+    params.set("organisationId", activeContext.companyId);
   }
   params.set("limit", "100");
 

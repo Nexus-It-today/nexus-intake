@@ -23,8 +23,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const { data: merchants, error } = await privilegedClient
     .from("merchants")
-    .select("id, organisation_id, name, trading_name, status, created_at")
-    .eq("organisation_id", organisationId)
+    .select("id, company_id, name, trading_name, status, created_at")
+    .eq("company_id", organisationId)
     .order("name");
 
   if (error) {
@@ -55,25 +55,25 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
   }
 
-  const { data: organisation, error: organisationError } = await privilegedClient
-    .from("organisations")
+  const { data: company, error: companyError } = await privilegedClient
+    .from("companies")
     .select("id")
     .eq("id", organisationId)
     .maybeSingle();
-  if (organisationError || !organisation) {
-    return NextResponse.json({ error: "Organisation not found." }, { status: 404 });
+  if (companyError || !company) {
+    return NextResponse.json({ error: "Company not found." }, { status: 404 });
   }
 
   const { data: merchant, error } = await privilegedClient
     .from("merchants")
     .insert({
-      organisation_id: organisationId,
+      company_id: organisationId,
       name,
       trading_name: body.tradingName?.trim() || null,
       status: "active",
       created_by: result.value.userId,
     })
-    .select("id, organisation_id, name, trading_name, status")
+    .select("id, company_id, name, trading_name, status")
     .single();
 
   if (error || !merchant) {

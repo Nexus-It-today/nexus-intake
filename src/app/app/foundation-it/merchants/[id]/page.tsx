@@ -24,7 +24,7 @@ import {
 type MerchantDetail = {
   merchant: {
     id: string;
-    organisation_id: string;
+    company_id: string;
     name: string;
     trading_name: string | null;
     status: "active" | "suspended" | "archived";
@@ -49,7 +49,7 @@ export default function MerchantDetailPage() {
     (Boolean(profile?.isPlatformAdmin) ||
       profile?.merchants.some((m) => m.id === id && ["merchant_owner", "merchant_admin"].includes(m.role)) ||
       profile?.organisations.some(
-        (org) => org.id === data?.merchant.organisation_id && ["organisation_owner", "organisation_admin"].includes(org.role)
+        (org) => org.id === data?.merchant.company_id && ["organisation_owner", "organisation_admin"].includes(org.role)
       ));
 
   function startEdit() {
@@ -123,7 +123,7 @@ export default function MerchantDetailPage() {
         <Card>
           <p className="text-xs uppercase tracking-wide text-slate-400">Organisation</p>
           <Link
-            href={`/app/foundation-it/organisations/${merchant.organisation_id}`}
+            href={`/app/foundation-it/organisations/${merchant.company_id}`}
             className="mt-2 block text-sm font-medium text-blue-600 hover:text-blue-700"
           >
             View parent organisation

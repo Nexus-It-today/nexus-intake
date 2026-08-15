@@ -28,7 +28,6 @@ export const MERCHANT_MANAGE_ROLES: MerchantRole[] = ["merchant_owner", "merchan
 
 export type OrganisationSummary = {
   id: string;
-  slug: string;
   name: string;
   tradingName: string | null;
   status: TenantStatus;
@@ -38,7 +37,7 @@ export type OrganisationSummary = {
 
 export type MerchantSummary = {
   id: string;
-  organisationId: string;
+  companyId: string;
   name: string;
   tradingName: string | null;
   status: TenantStatus;
@@ -57,6 +56,6 @@ export type AccessProfile = {
 export type ActiveContext =
   | { type: "platform" }
   | { type: "organisation"; id: string; name: string; role: OrganisationRole }
-  | { type: "merchant"; id: string; organisationId: string; name: string; role: MerchantRole };
+  | { type: "merchant"; id: string; companyId: string; name: string; role: MerchantRole };
 
 export type StoredContextRequest = { type: "organisation" | "merchant"; id: string } | { type: "platform" };

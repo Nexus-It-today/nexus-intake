@@ -224,18 +224,18 @@ export async function canManageBrandingForScope(
   }
 
   if (scope === "merchant" && scopeId) {
-    const { data: merchant } = await client.from("merchants").select("organisation_id").eq("id", scopeId).maybeSingle();
+    const { data: merchant } = await client.from("merchants").select("company_id").eq("id", scopeId).maybeSingle();
     if (!merchant) return false;
 
     const canManage =
       profile.isPlatformAdmin ||
       profile.merchants.some((m) => m.id === scopeId && ["merchant_owner", "merchant_admin"].includes(m.role)) ||
       profile.organisations.some(
-        (org) => org.id === merchant.organisation_id && ["organisation_owner", "organisation_admin"].includes(org.role)
+        (org) => org.id === merchant.company_id && ["organisation_owner", "organisation_admin"].includes(org.role)
       );
     if (!canManage) return false;
 
-    const parentBranding = await fetchBrandingProfile(client, "organisation", merchant.organisation_id);
+    const parentBranding = await fetchBrandingProfile(client, "organisation", merchant.company_id);
     return parentBranding?.allow_merchant_branding ?? true;
   }
 

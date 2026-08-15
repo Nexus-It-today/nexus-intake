@@ -83,7 +83,7 @@ BEGIN
         SELECT bp.allow_merchant_branding
         FROM public.merchants m
         JOIN public.branding_profiles bp
-          ON bp.scope = 'organisation' AND bp.scope_id = m.organisation_id
+          ON bp.scope = 'organisation' AND bp.scope_id = m.company_id
         WHERE m.id = target_scope_id
       ), TRUE);
   ELSE

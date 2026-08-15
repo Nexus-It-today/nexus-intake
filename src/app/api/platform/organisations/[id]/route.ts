@@ -22,8 +22,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 
   const { data: organisation, error } = await privilegedClient
-    .from("organisations")
-    .select("id, slug, name, trading_name, status, created_at, updated_at")
+    .from("companies")
+    .select("id, name, trading_name, status, created_at, updated_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 
   const [{ count: merchantCount }, { count: memberCount }] = await Promise.all([
-    privilegedClient.from("merchants").select("id", { count: "exact", head: true }).eq("organisation_id", id),
+    privilegedClient.from("merchants").select("id", { count: "exact", head: true }).eq("company_id", id),
     privilegedClient.from("organisation_memberships").select("id", { count: "exact", head: true }).eq("organisation_id", id),
   ]);
 
@@ -75,10 +75,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   }
 
   const { data: organisation, error } = await privilegedClient
-    .from("organisations")
+    .from("companies")
     .update(updates)
     .eq("id", id)
-    .select("id, slug, name, trading_name, status")
+    .select("id, name, trading_name, status")
     .single();
 
   if (error || !organisation) {

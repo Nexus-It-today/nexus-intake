@@ -57,8 +57,17 @@ ON public.draft_jobs
 FOR SELECT
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_access_merchant(merchant_id))
-  OR public.can_access_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_access_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS draft_jobs_insert ON public.draft_jobs;
@@ -67,8 +76,17 @@ ON public.draft_jobs
 FOR INSERT
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS draft_jobs_update ON public.draft_jobs;
@@ -77,13 +95,31 @@ ON public.draft_jobs
 FOR UPDATE
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 )
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 -- ---------------------------------------------------------------------------
@@ -99,8 +135,17 @@ ON public.merchant_customers
 FOR SELECT
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_access_merchant(merchant_id))
-  OR public.can_access_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_access_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_customers_insert ON public.merchant_customers;
@@ -109,8 +154,17 @@ ON public.merchant_customers
 FOR INSERT
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_customers_update ON public.merchant_customers;
@@ -119,13 +173,31 @@ ON public.merchant_customers
 FOR UPDATE
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 )
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 -- ---------------------------------------------------------------------------
@@ -141,8 +213,17 @@ ON public.merchant_customer_invitations
 FOR SELECT
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_access_merchant(merchant_id))
-  OR public.can_access_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_access_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_customer_invitations_insert ON public.merchant_customer_invitations;
@@ -151,8 +232,17 @@ ON public.merchant_customer_invitations
 FOR INSERT
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_customer_invitations_update ON public.merchant_customer_invitations;
@@ -161,13 +251,31 @@ ON public.merchant_customer_invitations
 FOR UPDATE
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 )
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 -- ---------------------------------------------------------------------------
@@ -183,8 +291,17 @@ ON public.merchant_collection_profiles
 FOR SELECT
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_access_merchant(merchant_id))
-  OR public.can_access_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_access_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_collection_profiles_insert ON public.merchant_collection_profiles;
@@ -193,8 +310,17 @@ ON public.merchant_collection_profiles
 FOR INSERT
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_collection_profiles_update ON public.merchant_collection_profiles;
@@ -203,13 +329,31 @@ ON public.merchant_collection_profiles
 FOR UPDATE
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 )
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 -- ---------------------------------------------------------------------------
@@ -225,8 +369,17 @@ ON public.merchant_integration_connections
 FOR SELECT
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_access_merchant(merchant_id))
-  OR public.can_access_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_access_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_integration_connections_insert ON public.merchant_integration_connections;
@@ -235,8 +388,17 @@ ON public.merchant_integration_connections
 FOR INSERT
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_integration_connections_update ON public.merchant_integration_connections;
@@ -245,13 +407,31 @@ ON public.merchant_integration_connections
 FOR UPDATE
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 )
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 -- ---------------------------------------------------------------------------
@@ -267,8 +447,17 @@ ON public.sales_channels
 FOR SELECT
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_access_merchant(merchant_id))
-  OR public.can_access_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_access_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS sales_channels_insert ON public.sales_channels;
@@ -277,8 +466,17 @@ ON public.sales_channels
 FOR INSERT
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS sales_channels_update ON public.sales_channels;
@@ -287,13 +485,31 @@ ON public.sales_channels
 FOR UPDATE
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 )
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 -- ---------------------------------------------------------------------------
@@ -309,8 +525,17 @@ ON public.merchant_customer_booking_profiles
 FOR SELECT
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_access_merchant(merchant_id))
-  OR public.can_access_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_access_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_customer_booking_profiles_insert ON public.merchant_customer_booking_profiles;
@@ -319,8 +544,17 @@ ON public.merchant_customer_booking_profiles
 FOR INSERT
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS merchant_customer_booking_profiles_update ON public.merchant_customer_booking_profiles;
@@ -329,13 +563,31 @@ ON public.merchant_customer_booking_profiles
 FOR UPDATE
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 )
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 -- ---------------------------------------------------------------------------
@@ -351,8 +603,17 @@ ON public.uploaded_documents
 FOR SELECT
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_access_merchant(merchant_id))
-  OR public.can_access_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_access_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS uploaded_documents_insert ON public.uploaded_documents;
@@ -361,8 +622,17 @@ ON public.uploaded_documents
 FOR INSERT
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 DROP POLICY IF EXISTS uploaded_documents_update ON public.uploaded_documents;
@@ -371,13 +641,31 @@ ON public.uploaded_documents
 FOR UPDATE
 USING (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 )
 WITH CHECK (
   public.is_platform_admin()
-  OR (merchant_id IS NOT NULL AND public.can_manage_merchant(merchant_id))
-  OR public.can_manage_organisation(company_id)
+  OR (
+    merchant_id IS NOT NULL
+    AND public.can_manage_merchant(merchant_id)
+    AND EXISTS (
+      SELECT 1
+      FROM public.merchants m
+      WHERE m.id = merchant_id
+        AND m.organisation_id = company_id
+    )
+  )
+  OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
 );
 
 -- ---------------------------------------------------------------------------

@@ -165,7 +165,7 @@ AS $$
     SELECT 1
     FROM public.merchants m
     WHERE m.id = target_merchant_id
-      AND public.can_access_organisation(m.company_id)
+      AND public.can_access_organisation(m.organisation_id)
   );
 $$;
 
@@ -182,7 +182,7 @@ AS $$
     SELECT 1
     FROM public.merchants m
     WHERE m.id = target_merchant_id
-      AND public.has_organisation_role(m.company_id, ARRAY['organisation_owner', 'organisation_admin'])
+      AND public.has_organisation_role(m.organisation_id, ARRAY['organisation_owner', 'organisation_admin'])
   );
 $$;
 
@@ -197,20 +197,20 @@ DROP POLICY IF EXISTS merchants_select ON public.merchants;
 CREATE POLICY merchants_select
 ON public.merchants
 FOR SELECT
-USING (public.can_access_organisation(company_id) OR public.can_access_merchant(id));
+USING (public.can_access_organisation(organisation_id) OR public.can_access_merchant(id));
 
 DROP POLICY IF EXISTS merchants_insert ON public.merchants;
 CREATE POLICY merchants_insert
 ON public.merchants
 FOR INSERT
-WITH CHECK (public.can_manage_organisation(company_id));
+WITH CHECK (public.can_manage_organisation(organisation_id));
 
 DROP POLICY IF EXISTS merchants_update ON public.merchants;
 CREATE POLICY merchants_update
 ON public.merchants
 FOR UPDATE
-USING (public.can_manage_organisation(company_id) OR public.can_manage_merchant(id))
-WITH CHECK (public.can_manage_organisation(company_id) OR public.can_manage_merchant(id));
+USING (public.can_manage_organisation(organisation_id) OR public.can_manage_merchant(id))
+WITH CHECK (public.can_manage_organisation(organisation_id) OR public.can_manage_merchant(id));
 
 -- Intentionally no DELETE policy: merchants are archived (status column),
 -- never hard-deleted, from normal application flows.

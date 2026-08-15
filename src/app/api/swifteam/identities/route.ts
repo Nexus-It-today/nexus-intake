@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPlatformContext } from "@/lib/platform/requestContext";
+import { requireModule } from "@/lib/platform/moduleGate";
 import { canAccessMerchant } from "@/lib/platform/permissions";
 import { SWIFTEAM_CIRCLELOOP_IDENTITY, SWIFTEAM_MASTER_EMAIL } from "@/lib/swifteam";
 
@@ -12,12 +12,7 @@ type IdentityRow = {
   is_active: boolean;
 };
 
-export async function GET(request: NextRequest) {
-  const ctx = await getPlatformContext(request);
-  if (!ctx.ok) {
-    return NextResponse.json({ error: ctx.error }, { status: ctx.status });
-  }
-
+export const GET = requireModule("communicate_it", async (request: NextRequest, ctx) => {
   const requestedMerchantId = (request.nextUrl.searchParams.get("merchantId") ?? "").trim();
   const contextMerchantId = ctx.activeContext.type === "merchant" ? ctx.activeContext.id : "";
   const merchantId = requestedMerchantId || contextMerchantId;
@@ -63,4 +58,4 @@ export async function GET(request: NextRequest) {
       whatsappPlaceholder: true,
     },
   });
-}
+});

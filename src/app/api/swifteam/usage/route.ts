@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPlatformContext } from "@/lib/platform/requestContext";
+import { requireModule } from "@/lib/platform/moduleGate";
 import { canAccessMerchant } from "@/lib/platform/permissions";
 import { clampPercent, warningLevel } from "@/lib/swifteam";
 
@@ -39,12 +39,7 @@ function endOfMonth(date: Date): string {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).toISOString().slice(0, 10);
 }
 
-export async function GET(request: NextRequest) {
-  const ctx = await getPlatformContext(request);
-  if (!ctx.ok) {
-    return NextResponse.json({ error: ctx.error }, { status: ctx.status });
-  }
-
+export const GET = requireModule("communicate_it", async (request: NextRequest, ctx) => {
   const requestedMerchantId = (request.nextUrl.searchParams.get("merchantId") ?? "").trim();
   const contextMerchantId = ctx.activeContext.type === "merchant" ? ctx.activeContext.id : "";
   const merchantId = requestedMerchantId || contextMerchantId;
@@ -183,4 +178,4 @@ export async function GET(request: NextRequest) {
         merchantName: allMerchantNames[row.merchant_id] ?? row.merchant_id,
       })) ?? [],
   });
-}
+});

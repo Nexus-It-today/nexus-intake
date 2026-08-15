@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPlatformContext } from "@/lib/platform/requestContext";
+import { requireModule } from "@/lib/platform/moduleGate";
 import { canAccessMerchant } from "@/lib/platform/permissions";
 import { SWIFTEAM_METERED_ACTIONS, type SwifteamMeteredAction } from "@/lib/swifteam";
 
@@ -19,12 +19,7 @@ type UsageEventBody = {
 
 const VALID_ACTIONS = new Set<string>(SWIFTEAM_METERED_ACTIONS);
 
-export async function POST(request: NextRequest) {
-  const ctx = await getPlatformContext(request);
-  if (!ctx.ok) {
-    return NextResponse.json({ error: ctx.error }, { status: ctx.status });
-  }
-
+export const POST = requireModule("communicate_it", async (request: NextRequest, ctx) => {
   const body = (await request.json().catch(() => ({}))) as UsageEventBody;
 
   const contextMerchantId = ctx.activeContext.type === "merchant" ? ctx.activeContext.id : "";
@@ -89,4 +84,4 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({ event: data }, { status: 201 });
-}
+});

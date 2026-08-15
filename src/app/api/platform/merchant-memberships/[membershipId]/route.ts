@@ -13,7 +13,7 @@ type MembershipWithMerchant = {
   user_id: string;
   role: string;
   status: string;
-  organisationId: string | null;
+  companyId: string | null;
 };
 
 async function loadMembershipWithMerchant(
@@ -29,11 +29,11 @@ async function loadMembershipWithMerchant(
 
   const { data: merchant } = await privilegedClient
     .from("merchants")
-    .select("organisation_id")
+    .select("company_id")
     .eq("id", membership.merchant_id)
     .maybeSingle();
 
-  return { ...membership, organisationId: merchant?.organisation_id ?? null };
+  return { ...membership, companyId: merchant?.company_id ?? null };
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
@@ -52,7 +52,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   if (!existing) {
     return NextResponse.json({ error: "Membership not found." }, { status: 404 });
   }
-  if (!canManageMerchant(result.value, existing.merchant_id, existing.organisationId ?? undefined)) {
+  if (!canManageMerchant(result.value, existing.merchant_id, existing.companyId ?? undefined)) {
     return NextResponse.json({ error: "You do not have permission to manage this membership." }, { status: 403 });
   }
 
@@ -81,7 +81,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   await recordAuditEvent(privilegedClient, {
     actorUserId: result.value.userId,
-    organisationId: existing.organisationId,
+    organisationId: existing.companyId,
     merchantId: existing.merchant_id,
     action: "membership.role_changed",
     entityType: "merchant_membership",
@@ -108,7 +108,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   if (!existing) {
     return NextResponse.json({ error: "Membership not found." }, { status: 404 });
   }
-  if (!canManageMerchant(result.value, existing.merchant_id, existing.organisationId ?? undefined)) {
+  if (!canManageMerchant(result.value, existing.merchant_id, existing.companyId ?? undefined)) {
     return NextResponse.json({ error: "You do not have permission to remove this membership." }, { status: 403 });
   }
 
@@ -119,7 +119,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
   await recordAuditEvent(privilegedClient, {
     actorUserId: result.value.userId,
-    organisationId: existing.organisationId,
+    organisationId: existing.companyId,
     merchantId: existing.merchant_id,
     action: "membership.removed",
     entityType: "merchant_membership",

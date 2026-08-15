@@ -95,7 +95,7 @@ export default function CommercialItPage() {
   const { accessToken, profile, activeContext } = usePlatform();
 
   const defaultOrgId =
-    activeContext?.type === "organisation" ? activeContext.id : activeContext?.type === "merchant" ? activeContext.organisationId : profile?.organisations[0]?.id ?? "";
+    activeContext?.type === "organisation" ? activeContext.id : activeContext?.type === "merchant" ? activeContext.companyId : profile?.organisations[0]?.id ?? "";
   const [selectedOrgId, setSelectedOrgId] = useState(defaultOrgId);
   const organisationId = selectedOrgId || defaultOrgId;
 

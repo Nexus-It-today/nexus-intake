@@ -64,7 +64,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
@@ -83,7 +83,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -102,7 +102,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -116,7 +116,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -142,7 +142,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
@@ -161,7 +161,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -180,7 +180,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -194,7 +194,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -220,7 +220,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
@@ -239,7 +239,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -258,7 +258,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -272,7 +272,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -298,7 +298,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
@@ -317,7 +317,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -336,7 +336,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -350,7 +350,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -376,7 +376,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
@@ -395,7 +395,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -414,7 +414,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -428,7 +428,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -454,7 +454,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
@@ -473,7 +473,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -492,7 +492,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -506,7 +506,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -532,7 +532,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
@@ -551,7 +551,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -570,7 +570,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -584,7 +584,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -610,7 +610,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_access_organisation(company_id))
@@ -629,7 +629,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -648,7 +648,7 @@ USING (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))
@@ -662,7 +662,7 @@ WITH CHECK (
       SELECT 1
       FROM public.merchants m
       WHERE m.id = merchant_id
-        AND m.organisation_id = company_id
+        AND m.company_id = company_id
     )
   )
   OR (merchant_id IS NULL AND public.can_manage_organisation(company_id))

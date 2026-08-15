@@ -10,7 +10,7 @@
 
 CREATE TABLE IF NOT EXISTS public.organisation_memberships (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organisation_id UUID NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
+  organisation_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   role TEXT NOT NULL CHECK (role IN (
     'organisation_owner', 'organisation_admin', 'organisation_operator', 'organisation_viewer'
@@ -108,7 +108,7 @@ AS $$
     SELECT 1
     FROM public.profiles p
     WHERE p.auth_user_id = auth.uid()
-      AND COALESCE(p.organisation_id, p.company_id) = target_organisation_id
+      AND p.company_id = target_organisation_id
   )
   OR EXISTS (
     SELECT 1
@@ -138,7 +138,7 @@ AS $$
     SELECT 1
     FROM public.profiles p
     WHERE p.auth_user_id = auth.uid()
-      AND COALESCE(p.organisation_id, p.company_id) = target_organisation_id
+      AND p.company_id = target_organisation_id
       AND lower(COALESCE(p.role, '')) IN ('company_admin', 'operations_admin', 'operations', 'super_admin', 'platform_admin', 'admin', 'owner')
   )
   OR EXISTS (
@@ -165,7 +165,7 @@ AS $$
     SELECT 1
     FROM public.merchants m
     WHERE m.id = target_merchant_id
-      AND public.can_access_organisation(m.organisation_id)
+      AND public.can_access_organisation(m.company_id)
   );
 $$;
 
@@ -182,7 +182,7 @@ AS $$
     SELECT 1
     FROM public.merchants m
     WHERE m.id = target_merchant_id
-      AND public.has_organisation_role(m.organisation_id, ARRAY['organisation_owner', 'organisation_admin'])
+      AND public.has_organisation_role(m.company_id, ARRAY['organisation_owner', 'organisation_admin'])
   );
 $$;
 
@@ -197,20 +197,20 @@ DROP POLICY IF EXISTS merchants_select ON public.merchants;
 CREATE POLICY merchants_select
 ON public.merchants
 FOR SELECT
-USING (public.can_access_organisation(organisation_id) OR public.can_access_merchant(id));
+USING (public.can_access_organisation(company_id) OR public.can_access_merchant(id));
 
 DROP POLICY IF EXISTS merchants_insert ON public.merchants;
 CREATE POLICY merchants_insert
 ON public.merchants
 FOR INSERT
-WITH CHECK (public.can_manage_organisation(organisation_id));
+WITH CHECK (public.can_manage_organisation(company_id));
 
 DROP POLICY IF EXISTS merchants_update ON public.merchants;
 CREATE POLICY merchants_update
 ON public.merchants
 FOR UPDATE
-USING (public.can_manage_organisation(organisation_id) OR public.can_manage_merchant(id))
-WITH CHECK (public.can_manage_organisation(organisation_id) OR public.can_manage_merchant(id));
+USING (public.can_manage_organisation(company_id) OR public.can_manage_merchant(id))
+WITH CHECK (public.can_manage_organisation(company_id) OR public.can_manage_merchant(id));
 
 -- Intentionally no DELETE policy: merchants are archived (status column),
 -- never hard-deleted, from normal application flows.

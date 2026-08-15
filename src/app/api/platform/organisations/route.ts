@@ -13,14 +13,6 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ organisations: result.value.organisations });
 }
 
-function slugify(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 export async function POST(request: NextRequest) {
   const result = await getAccessProfile(request);
   if (!result.ok) {
@@ -35,7 +27,6 @@ export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => ({}))) as {
     name?: string;
     tradingName?: string;
-    slug?: string;
     ownerEmail?: string;
   };
 
@@ -44,32 +35,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Organisation name is required." }, { status: 400 });
   }
 
-  const slug = slugify(body.slug?.trim() || name);
-  if (!slug) {
-    return NextResponse.json({ error: "Could not derive a valid slug from the organisation name." }, { status: 400 });
-  }
-
   const privilegedClient = createPrivilegedClient();
   if (!privilegedClient) {
     return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
   }
 
   const { data: organisation, error } = await privilegedClient
-    .from("organisations")
+    .from("companies")
     .insert({
       name,
       trading_name: body.tradingName?.trim() || null,
-      slug,
       status: "active",
       source_system: "app",
-      created_by: result.value.userId,
     })
-    .select("id, slug, name, trading_name, status")
+    .select("id, name, trading_name, status")
     .single();
 
   if (error || !organisation) {
-    const message = error?.code === "23505" ? "An organisation with this slug already exists." : error?.message ?? "Failed to create organisation.";
-    return NextResponse.json({ error: message }, { status: error?.code === "23505" ? 409 : 500 });
+    return NextResponse.json({ error: error?.message ?? "Failed to create organisation." }, { status: 500 });
   }
 
   await recordAuditEvent(privilegedClient, {
@@ -78,7 +61,7 @@ export async function POST(request: NextRequest) {
     action: "organisation.created",
     entityType: "organisation",
     entityId: organisation.id,
-    metadata: { name, slug },
+    metadata: { name },
   });
 
   let ownerInviteError: string | null = null;

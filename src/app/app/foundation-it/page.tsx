@@ -132,7 +132,7 @@ function OrganisationDashboard({ organisationId }: { organisationId: string }) {
 
 function MerchantDashboard({ merchantId }: { merchantId: string }) {
   const { data, loading } = useAuthedResource<{
-    merchant: { name: string; status: string; memberCount: number; organisation_id: string };
+    merchant: { name: string; status: string; memberCount: number; company_id: string };
   }>(`/api/platform/merchants/${merchantId}`);
 
   if (loading) return <LoadingState label="Loading merchant dashboard..." />;

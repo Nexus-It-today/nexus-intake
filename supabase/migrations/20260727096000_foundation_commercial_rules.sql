@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS public.platform_modules (
 
 CREATE TABLE IF NOT EXISTS public.organisation_module_entitlements (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organisation_id UUID NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
+  organisation_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   module_key TEXT NOT NULL REFERENCES public.platform_modules(module_key) ON DELETE CASCADE,
   enabled BOOLEAN NOT NULL DEFAULT FALSE,
   source TEXT NOT NULL DEFAULT 'manual_grant' CHECK (source IN ('platform_default', 'manual_grant')),
@@ -126,14 +126,14 @@ USING (
   public.current_user_is_super_admin()
   OR EXISTS (
     SELECT 1 FROM public.merchants m
-    WHERE m.id = merchant_id AND public.has_organisation_role(m.organisation_id, ARRAY['organisation_owner', 'organisation_admin'])
+    WHERE m.id = merchant_id AND public.has_organisation_role(m.company_id, ARRAY['organisation_owner', 'organisation_admin'])
   )
 )
 WITH CHECK (
   public.current_user_is_super_admin()
   OR EXISTS (
     SELECT 1 FROM public.merchants m
-    WHERE m.id = merchant_id AND public.has_organisation_role(m.organisation_id, ARRAY['organisation_owner', 'organisation_admin'])
+    WHERE m.id = merchant_id AND public.has_organisation_role(m.company_id, ARRAY['organisation_owner', 'organisation_admin'])
   )
 );
 

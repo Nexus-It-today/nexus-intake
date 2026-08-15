@@ -110,7 +110,7 @@ export default function AppShellChrome({ children }: { children: ReactNode }) {
     !legacyGatedRoute && profile && !profile.isPlatformAdmin && profile.organisations.length === 0 && profile.merchants.length === 0;
 
   const contextOrganisationId =
-    activeContext?.type === "organisation" ? activeContext.id : activeContext?.type === "merchant" ? activeContext.organisationId : null;
+    activeContext?.type === "organisation" ? activeContext.id : activeContext?.type === "merchant" ? activeContext.companyId : null;
   const contextMerchantId = activeContext?.type === "merchant" ? activeContext.id : null;
 
   return (

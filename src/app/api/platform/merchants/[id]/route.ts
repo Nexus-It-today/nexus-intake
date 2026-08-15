@@ -20,7 +20,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const { data: merchant, error } = await privilegedClient
     .from("merchants")
-    .select("id, organisation_id, name, trading_name, status, created_at, updated_at")
+    .select("id, company_id, name, trading_name, status, created_at, updated_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   if (!merchant) {
     return NextResponse.json({ error: "Merchant not found." }, { status: 404 });
   }
-  if (!canAccessMerchant(result.value, id, merchant.organisation_id)) {
+  if (!canAccessMerchant(result.value, id, merchant.company_id)) {
     return NextResponse.json({ error: "You do not have access to this merchant." }, { status: 403 });
   }
 
@@ -56,13 +56,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   const { data: existingMerchant, error: fetchError } = await privilegedClient
     .from("merchants")
-    .select("id, organisation_id")
+    .select("id, company_id")
     .eq("id", id)
     .maybeSingle();
   if (fetchError || !existingMerchant) {
     return NextResponse.json({ error: "Merchant not found." }, { status: 404 });
   }
-  if (!canManageMerchant(result.value, id, existingMerchant.organisation_id)) {
+  if (!canManageMerchant(result.value, id, existingMerchant.company_id)) {
     return NextResponse.json({ error: "You do not have permission to edit this merchant." }, { status: 403 });
   }
 
@@ -85,7 +85,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     .from("merchants")
     .update(updates)
     .eq("id", id)
-    .select("id, organisation_id, name, trading_name, status")
+    .select("id, company_id, name, trading_name, status")
     .single();
 
   if (error || !merchant) {
@@ -94,7 +94,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   await recordAuditEvent(privilegedClient, {
     actorUserId: result.value.userId,
-    organisationId: existingMerchant.organisation_id,
+    organisationId: existingMerchant.company_id,
     merchantId: id,
     action: updates.status === "archived" ? "merchant.archived" : "merchant.updated",
     entityType: "merchant",

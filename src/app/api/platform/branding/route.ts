@@ -22,15 +22,15 @@ export async function GET(request: NextRequest) {
   if (merchantId && !organisationId) {
     // `merchants` RLS requires an authenticated membership/role check, so an
     // anonymous request can never read it directly. This lookup only needs
-    // the (non-sensitive) organisation_id to resolve the inheritance chain -
+    // the (non-sensitive) company_id to resolve the inheritance chain -
     // it never returns merchant data to the caller - so the privileged
     // client is used here specifically, while branding_profiles/assets reads
     // below stay on the public anon client.
     const privilegedClient = createPrivilegedClient();
     const { data: merchant } = privilegedClient
-      ? await privilegedClient.from("merchants").select("organisation_id").eq("id", merchantId).maybeSingle()
+      ? await privilegedClient.from("merchants").select("company_id").eq("id", merchantId).maybeSingle()
       : { data: null };
-    resolvedOrganisationId = merchant?.organisation_id ?? null;
+    resolvedOrganisationId = merchant?.company_id ?? null;
   }
 
   const branding = await resolveBranding(client, {

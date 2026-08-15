@@ -59,9 +59,9 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1
     FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'merchants' AND column_name = 'organisation_id'
+    WHERE table_schema = 'public' AND table_name = 'merchants' AND column_name = 'company_id'
   ) THEN
-    RAISE EXCEPTION 'Missing required column: public.merchants.organisation_id';
+    RAISE EXCEPTION 'Missing required column: public.merchants.company_id';
   END IF;
 END
 $$;
@@ -258,7 +258,7 @@ AS $$
     SELECT 1
     FROM public.merchants m
     WHERE m.id = target_merchant_id
-      AND public.can_access_organisation(m.organisation_id)
+      AND public.can_access_organisation(m.company_id)
   );
 $$;
 
@@ -275,7 +275,7 @@ AS $$
     SELECT 1
     FROM public.merchants m
     WHERE m.id = target_merchant_id
-      AND public.can_manage_organisation(m.organisation_id)
+      AND public.can_manage_organisation(m.company_id)
   );
 $$;
 
@@ -286,20 +286,20 @@ DROP POLICY IF EXISTS merchants_select ON public.merchants;
 CREATE POLICY merchants_select
 ON public.merchants
 FOR SELECT
-USING (public.can_access_organisation(organisation_id) OR public.can_access_merchant(id));
+USING (public.can_access_organisation(company_id) OR public.can_access_merchant(id));
 
 DROP POLICY IF EXISTS merchants_insert ON public.merchants;
 CREATE POLICY merchants_insert
 ON public.merchants
 FOR INSERT
-WITH CHECK (public.can_manage_organisation(organisation_id));
+WITH CHECK (public.can_manage_organisation(company_id));
 
 DROP POLICY IF EXISTS merchants_update ON public.merchants;
 CREATE POLICY merchants_update
 ON public.merchants
 FOR UPDATE
-USING (public.can_manage_organisation(organisation_id) OR public.can_manage_merchant(id))
-WITH CHECK (public.can_manage_organisation(organisation_id) OR public.can_manage_merchant(id));
+USING (public.can_manage_organisation(company_id) OR public.can_manage_merchant(id))
+WITH CHECK (public.can_manage_organisation(company_id) OR public.can_manage_merchant(id));
 
 ALTER TABLE public.organisation_memberships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.organisation_memberships FORCE ROW LEVEL SECURITY;

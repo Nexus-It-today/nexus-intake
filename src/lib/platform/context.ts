@@ -61,7 +61,7 @@ export function resolveActiveContext(
       return {
         type: "merchant",
         id: match.id,
-        organisationId: match.organisationId,
+        companyId: match.companyId,
         name: match.name,
         role: match.role,
       };
@@ -78,7 +78,7 @@ export function resolveActiveContext(
     return {
       type: "merchant",
       id: first.id,
-      organisationId: first.organisationId,
+      companyId: first.companyId,
       name: first.name,
       role: first.role,
     };

@@ -147,7 +147,7 @@ function ProviderCard({ provider, organisationId, canManage, onChanged }: {
 
 export default function IntegrateItPage() {
   const { activeContext, previewReadOnly } = usePlatform();
-  const organisationId = activeContext?.type === "organisation" ? activeContext.id : activeContext?.type === "merchant" ? activeContext.organisationId : null;
+  const organisationId = activeContext?.type === "organisation" ? activeContext.id : activeContext?.type === "merchant" ? activeContext.companyId : null;
 
   const { data, loading, error, reload } = useAuthedResource<{ integrations: IntegrationRow[]; canManage: boolean }>(
     organisationId ? `/api/platform/organisations/${organisationId}/integrations` : null

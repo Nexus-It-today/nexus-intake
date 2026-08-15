@@ -7,12 +7,12 @@ import { resolveMerchantEntitlements, resolveOrganisationEntitlements } from "@/
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-async function loadMerchantOrganisationId(
+async function loadMerchantCompanyId(
   privilegedClient: NonNullable<ReturnType<typeof createPrivilegedClient>>,
   merchantId: string
 ): Promise<string | null> {
-  const { data } = await privilegedClient.from("merchants").select("organisation_id").eq("id", merchantId).maybeSingle();
-  return data?.organisation_id ?? null;
+  const { data } = await privilegedClient.from("merchants").select("company_id").eq("id", merchantId).maybeSingle();
+  return data?.company_id ?? null;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
@@ -27,16 +27,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
   }
 
-  const organisationId = await loadMerchantOrganisationId(privilegedClient, merchantId);
-  if (!organisationId) {
+  const companyId = await loadMerchantCompanyId(privilegedClient, merchantId);
+  if (!companyId) {
     return NextResponse.json({ error: "Merchant not found." }, { status: 404 });
   }
-  if (!canAccessMerchant(result.value, merchantId, organisationId)) {
+  if (!canAccessMerchant(result.value, merchantId, companyId)) {
     return NextResponse.json({ error: "You do not have access to this merchant." }, { status: 403 });
   }
 
-  const entitlements = await resolveMerchantEntitlements(privilegedClient, merchantId, organisationId);
-  return NextResponse.json({ entitlements, canManage: canManageMerchant(result.value, merchantId, organisationId) });
+  const entitlements = await resolveMerchantEntitlements(privilegedClient, merchantId, companyId);
+  return NextResponse.json({ entitlements, canManage: canManageMerchant(result.value, merchantId, companyId) });
 }
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
@@ -51,11 +51,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
   }
 
-  const organisationId = await loadMerchantOrganisationId(privilegedClient, merchantId);
-  if (!organisationId) {
+  const companyId = await loadMerchantCompanyId(privilegedClient, merchantId);
+  if (!companyId) {
     return NextResponse.json({ error: "Merchant not found." }, { status: 404 });
   }
-  if (!canManageMerchant(result.value, merchantId, organisationId)) {
+  if (!canManageMerchant(result.value, merchantId, companyId)) {
     return NextResponse.json({ error: "You do not have permission to change this merchant's entitlements." }, { status: 403 });
   }
 
@@ -74,7 +74,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   // "do not allow users to grant permissions above their own authority"
   // applies to entitlements too.
   if (body.enabled) {
-    const organisationEntitlements = await resolveOrganisationEntitlements(privilegedClient, organisationId);
+    const organisationEntitlements = await resolveOrganisationEntitlements(privilegedClient, companyId);
     const organisationAllows = organisationEntitlements.find((entry) => entry.moduleKey === moduleKey)?.enabled ?? false;
     if (!organisationAllows) {
       return NextResponse.json(
@@ -106,7 +106,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   await recordAuditEvent(privilegedClient, {
     actorUserId: result.value.userId,
-    organisationId,
+    organisationId: companyId,
     merchantId,
     action: "entitlement.updated",
     entityType: "merchant_module_entitlement",

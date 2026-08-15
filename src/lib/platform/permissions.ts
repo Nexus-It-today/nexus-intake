@@ -21,17 +21,17 @@ export function canManageOrganisation(profile: AccessProfile, organisationId: st
   return Boolean(membership && ORGANISATION_MANAGE_ROLES.includes(membership.role));
 }
 
-export function canAccessMerchant(profile: AccessProfile, merchantId: string, organisationId?: string): boolean {
+export function canAccessMerchant(profile: AccessProfile, merchantId: string, companyId?: string): boolean {
   if (profile.isPlatformAdmin) return true;
   if (profile.merchants.some((merchant) => merchant.id === merchantId)) return true;
-  if (organisationId && canAccessOrganisation(profile, organisationId)) return true;
+  if (companyId && canAccessOrganisation(profile, companyId)) return true;
   return false;
 }
 
-export function canManageMerchant(profile: AccessProfile, merchantId: string, organisationId?: string): boolean {
+export function canManageMerchant(profile: AccessProfile, merchantId: string, companyId?: string): boolean {
   if (profile.isPlatformAdmin) return true;
   const membership = profile.merchants.find((merchant) => merchant.id === merchantId);
   if (membership && MERCHANT_MANAGE_ROLES.includes(membership.role)) return true;
-  if (organisationId && canManageOrganisation(profile, organisationId)) return true;
+  if (companyId && canManageOrganisation(profile, companyId)) return true;
   return false;
 }

@@ -63,7 +63,7 @@ export function requireModule(
 
     if (activeContext.type === "merchant") {
       merchantId = activeContext.id;
-      organisationId = activeContext.organisationId;
+      organisationId = activeContext.companyId;
     } else if (activeContext.type === "organisation") {
       organisationId = activeContext.id;
     }

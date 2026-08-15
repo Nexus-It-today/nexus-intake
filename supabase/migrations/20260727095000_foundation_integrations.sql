@@ -10,7 +10,7 @@
 
 CREATE TABLE IF NOT EXISTS public.organisation_integration_connections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organisation_id UUID NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
+  organisation_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   provider_key TEXT NOT NULL REFERENCES public.integration_providers(provider_key) ON DELETE RESTRICT,
   connected BOOLEAN NOT NULL DEFAULT FALSE,
   -- Encrypted with the existing src/lib/integrations/credentials.ts helper

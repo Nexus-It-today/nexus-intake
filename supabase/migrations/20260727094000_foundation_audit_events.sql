@@ -9,7 +9,7 @@
 CREATE TABLE IF NOT EXISTS public.audit_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   actor_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  organisation_id UUID REFERENCES public.organisations(id) ON DELETE SET NULL,
+  organisation_id UUID REFERENCES public.companies(id) ON DELETE SET NULL,
   merchant_id UUID REFERENCES public.merchants(id) ON DELETE SET NULL,
   action TEXT NOT NULL,
   entity_type TEXT NOT NULL,

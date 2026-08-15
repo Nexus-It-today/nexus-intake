@@ -16,7 +16,6 @@ export type AccessProfileResult =
 
 type OrganisationRow = {
   id: string;
-  slug: string;
   name: string;
   trading_name: string | null;
   status: TenantStatus;
@@ -24,7 +23,7 @@ type OrganisationRow = {
 
 type MerchantRow = {
   id: string;
-  organisation_id: string;
+  company_id: string;
   name: string;
   trading_name: string | null;
   status: TenantStatus;
@@ -100,12 +99,12 @@ export async function getAccessProfile(request: NextRequest): Promise<AccessProf
     // explicit membership row for.
     const [{ data: allOrganisations }, { data: allMerchants }] = await Promise.all([
       privilegedClient
-        .from("organisations")
-        .select("id, slug, name, trading_name, status")
+        .from("companies")
+        .select("id, name, trading_name, status")
         .order("name"),
       privilegedClient
         .from("merchants")
-        .select("id, organisation_id, name, trading_name, status")
+        .select("id, company_id, name, trading_name, status")
         .order("name"),
     ]);
     organisationRows = (allOrganisations as OrganisationRow[] | null) ?? [];
@@ -116,8 +115,8 @@ export async function getAccessProfile(request: NextRequest): Promise<AccessProf
 
     if (orgIds.length > 0) {
       const { data } = await privilegedClient
-        .from("organisations")
-        .select("id, slug, name, trading_name, status")
+        .from("companies")
+        .select("id, name, trading_name, status")
         .in("id", orgIds);
       organisationRows = (data as OrganisationRow[] | null) ?? [];
     }
@@ -125,7 +124,7 @@ export async function getAccessProfile(request: NextRequest): Promise<AccessProf
     if (merchantIds.length > 0) {
       const { data } = await privilegedClient
         .from("merchants")
-        .select("id, organisation_id, name, trading_name, status")
+        .select("id, company_id, name, trading_name, status")
         .in("id", merchantIds);
       merchantRows = (data as MerchantRow[] | null) ?? [];
     }
@@ -135,7 +134,6 @@ export async function getAccessProfile(request: NextRequest): Promise<AccessProf
     const membership = membershipRoleByOrgId.get(row.id);
     return {
       id: row.id,
-      slug: row.slug,
       name: row.name,
       tradingName: row.trading_name,
       status: row.status,
@@ -148,7 +146,7 @@ export async function getAccessProfile(request: NextRequest): Promise<AccessProf
     const membership = membershipRoleByMerchantId.get(row.id);
     return {
       id: row.id,
-      organisationId: row.organisation_id,
+      companyId: row.company_id,
       name: row.name,
       tradingName: row.trading_name,
       status: row.status,

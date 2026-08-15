@@ -11,8 +11,13 @@ import { EmptyState, ErrorState, LoadingState } from "./ui";
 type NavItem = { label: string; href: string; comingLater?: boolean; hideForMerchantContext?: boolean };
 
 const PRODUCT_NAV_ITEMS: NavItem[] = [
-  { label: "Manage it", href: "/app/manage-it" },
-  { label: "Create it", href: "/app/create-it" },
+  { label: "Home", href: "/app/home" },
+  { label: "Customers", href: "/app/customers" },
+  { label: "Communicate it.", href: "/app/communicate-it" },
+  { label: "Track it.", href: "/app/track-it" },
+  { label: "Review it.", href: "/app/review-it" },
+  { label: "Tasks", href: "/app/tasks" },
+  { label: "Usage", href: "/app/usage" },
 ];
 
 const FOUNDATION_NAV_ITEMS: NavItem[] = [
@@ -27,12 +32,7 @@ const FOUNDATION_NAV_ITEMS: NavItem[] = [
   { label: "Settings", href: "/app/foundation-it/settings" },
 ];
 
-const COMING_LATER: NavItem[] = [
-  { label: "Book it", href: "#", comingLater: true },
-  { label: "Catalogue it", href: "#", comingLater: true },
-  { label: "Track it", href: "#", comingLater: true },
-  { label: "Invoice it", href: "#", comingLater: true },
-];
+const COMING_LATER: NavItem[] = [];
 
 function AccountMenu() {
   const { userEmail, signOut } = usePlatform();
@@ -171,18 +171,20 @@ export default function AppShellChrome({ children }: { children: ReactNode }) {
                 );
               })}
             </div>
-            <div className="pt-3">
-              <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">Coming later</p>
-              {COMING_LATER.map((item) => (
-                <span
-                  key={item.label}
-                  className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-400"
-                >
-                  {item.label}
-                  <span className="text-[10px] uppercase tracking-wide text-slate-300">Soon</span>
-                </span>
-              ))}
-            </div>
+            {COMING_LATER.length > 0 ? (
+              <div className="pt-3">
+                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">Coming later</p>
+                {COMING_LATER.map((item) => (
+                  <span
+                    key={item.label}
+                    className="flex cursor-not-allowed items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-400"
+                  >
+                    {item.label}
+                    <span className="text-[10px] uppercase tracking-wide text-slate-300">Soon</span>
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </nav>
         </aside>
 

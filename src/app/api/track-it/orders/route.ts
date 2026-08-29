@@ -3,9 +3,9 @@ import { getMerchantSession } from "@/lib/auth";
 
 type TrackItLeg = {
   id: string;
-  merchant_id: string;
+  merchant_id: string | null;
   logical_order_id: string;
-  provider_order_id: string;
+  provider_order_id: string | null;
   track_id: string | null;
   journey_leg: string;
   order_date: string | null;
@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
   const { privilegedClient, companyId, merchantId, isPlatformAdmin } = session;
   const params = request.nextUrl.searchParams;
   const requestedMerchantId = (params.get("merchantId") ?? "").trim();
+  const search = (params.get("search") ?? "").trim().toLowerCase();
   const limitParam = Number(params.get("limit") ?? "300");
   const limit = Number.isFinite(limitParam)
     ? Math.max(1, Math.min(Math.trunc(limitParam), 500))
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
     )
     .eq("company_id", companyId)
     .order("last_seen_at", { ascending: false })
-    .limit(limit);
+    .limit(search ? 500 : limit);
 
   if (isPlatformAdmin) {
     if (requestedMerchantId) query = query.eq("merchant_id", requestedMerchantId);
@@ -51,7 +52,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: legsError.message }, { status: 500 });
   }
 
-  const merchantIds = [...new Set((legs ?? []).map((leg) => leg.merchant_id))];
+  const merchantIds = [
+    ...new Set((legs ?? []).map((leg) => leg.merchant_id).filter((id): id is string => Boolean(id))),
+  ];
   const logicalOrderIds = [...new Set((legs ?? []).map((leg) => leg.logical_order_id))];
 
   const merchantNames = new Map<string, string>();
@@ -76,20 +79,38 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({
-    orders: (legs ?? []).map((leg) => ({
-      id: leg.id,
-      merchantId: leg.merchant_id,
-      merchantName: merchantNames.get(leg.merchant_id) ?? "—",
-      logicalOrderReference: logicalRefs.get(leg.logical_order_id) ?? "—",
-      providerOrderId: leg.provider_order_id,
-      trackId: leg.track_id ?? "",
-      journeyLeg: leg.journey_leg,
-      orderDate: leg.order_date ?? "",
-      status: leg.status ?? "",
-      trackingUrl: leg.track_link ?? "",
-      contactName: leg.contact_name ?? "",
-      updatedAt: leg.last_seen_at,
-    })),
-  });
+  const orders = (legs ?? []).map((leg) => ({
+    id: leg.id,
+    merchantId: leg.merchant_id ?? "",
+    merchantName: leg.merchant_id ? merchantNames.get(leg.merchant_id) ?? "Unattributed" : "Unattributed",
+    logicalOrderReference: logicalRefs.get(leg.logical_order_id) ?? "—",
+    providerOrderId: leg.provider_order_id ?? "",
+    trackId: leg.track_id ?? "",
+    journeyLeg: leg.journey_leg,
+    orderDate: leg.order_date ?? "",
+    status: leg.status ?? "",
+    trackingUrl: leg.track_link ?? "",
+    contactName: leg.contact_name ?? "",
+    updatedAt: leg.last_seen_at,
+  }));
+
+  const filtered = search
+    ? orders.filter((order) =>
+        [
+          order.logicalOrderReference,
+          order.providerOrderId,
+          order.trackId,
+          order.journeyLeg,
+          order.orderDate,
+          order.status,
+          order.contactName,
+          order.merchantName,
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(search)
+      )
+    : orders;
+
+  return NextResponse.json({ orders: filtered.slice(0, limit), total: filtered.length });
 }

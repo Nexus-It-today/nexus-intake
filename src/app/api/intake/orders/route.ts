@@ -1,34 +1,24 @@
 /**
- * POST /api/intake/orders
- *
- * Unified intake endpoint — accepts orders from any source system.
- * Delegates all business logic to intakeService.processIntake().
- *
- * Body shape:
- *   {
- *     order: StandardOrder  (from form/adapter)
- *     company_id?: string   (resolved from auth token if not provided)
- *     sales_channel_id?: string
- *     sales_channel_name?: string
- *     merchant_id?: string  (used for goods catalogue linkage only)
- *   }
+ * Unified authenticated intake endpoint. Every accepted request is retained
+ * before mapping and processing, so a downstream failure cannot erase it.
  */
-
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import {
-  sanitizeStandardOrder,
-  toIntakeOrderInput,
-} from "@/lib/intake/standardOrder";
+import { sanitizeStandardOrder, toIntakeOrderInput } from "@/lib/intake/standardOrder";
 import { processIntake } from "@/lib/intake/intakeService";
 import { notifyOrderCreated } from "@/lib/notify/orderCreated";
+import {
+  markReceiptFailed,
+  markReceiptProcessed,
+  markReceiptProcessing,
+  payloadHash,
+  persistReceipt,
+} from "@/lib/intake/durableReceipt";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServerKey =
-  process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseServerKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabasePublicKey =
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 function createAuthClient() {
   if (!supabaseUrl || !supabasePublicKey) return null;
@@ -50,15 +40,18 @@ function parseBearerToken(req: NextRequest): string {
 }
 
 export async function POST(request: NextRequest) {
+  let receiptId: string | null = null;
+  let privilegedClient: ReturnType<typeof createPrivilegedClient> = null;
   try {
     const authClient = createAuthClient();
-    const privilegedClient = createPrivilegedClient();
-
+    privilegedClient = createPrivilegedClient();
     if (!authClient || !privilegedClient) {
       return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
     }
 
-    const body = (await request.json().catch(() => ({}))) as {
+    const rawPayload = await request.text();
+    const body = JSON.parse(rawPayload || "{}") as {
+      event_id?: string;
       order?: unknown;
       company_id?: string;
       customer_id?: string;
@@ -69,17 +62,12 @@ export async function POST(request: NextRequest) {
       sales_channel_name?: string;
     };
 
-    // Resolve company + user from auth token if not explicitly provided
     let companyId = body.company_id?.trim() || "";
     let userId: string | null = null;
     const token = parseBearerToken(request);
-
     if (token) {
-      const {
-        data: { user },
-      } = await authClient.auth.getUser(token);
+      const { data: { user } } = await authClient.auth.getUser(token);
       userId = user?.id ?? null;
-
       if (userId && !companyId) {
         const { data: profile } = await privilegedClient
           .from("profiles")
@@ -93,11 +81,10 @@ export async function POST(request: NextRequest) {
     if (!companyId) {
       return NextResponse.json(
         { error: "No company linked to this intake request. Sign in or provide company_id." },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
-    // Sanitize and adapt to canonical intake input
     const order = sanitizeStandardOrder(body.order);
     const intakeInput = toIntakeOrderInput(order, {
       companyId,
@@ -109,15 +96,54 @@ export async function POST(request: NextRequest) {
       salesChannelName: body.sales_channel_name?.trim() || order.salesChannel.trim() || null,
     });
 
-    // Delegate to the unified intake service
-    const result = await processIntake(intakeInput, privilegedClient);
+    const eventId =
+      body.event_id?.trim() ||
+      request.headers.get("x-nexus-event-id")?.trim() ||
+      `payload:${payloadHash(rawPayload)}`;
+    const receipt = await persistReceipt(
+      privilegedClient,
+      {
+        companyId,
+        sourceSystem: intakeInput.sourceSystem || "nexus_form",
+        eventType: "order.submitted",
+        externalEventId: eventId,
+        externalOrderId: intakeInput.externalOrderId,
+        payload: body,
+      },
+      rawPayload,
+    );
+    receiptId = receipt.id;
 
-    if (!result.success) {
-      return NextResponse.json({ error: result.error }, { status: 400 });
+    if (receipt.duplicate && receipt.status === "processed") {
+      return NextResponse.json({
+        success: true,
+        duplicate: true,
+        receiptId: receipt.id,
+        jobId: receipt.draftJobId,
+      });
+    }
+    if (receipt.duplicate && receipt.status === "processing") {
+      return NextResponse.json(
+        { success: true, retained: true, processing: true, receiptId: receipt.id },
+        { status: 202 },
+      );
     }
 
-    // One NEXUS customer confirmation only: order successfully created.
-    // Operational updates are delegated to Track-POD.
+    await markReceiptProcessing(privilegedClient, receipt.id);
+    const result = await processIntake(intakeInput, privilegedClient);
+    if (!result.success) {
+      await markReceiptFailed(privilegedClient, receipt.id, result.error || "Intake processing failed");
+      return NextResponse.json({ error: result.error, receiptId: receipt.id, retained: true }, { status: 400 });
+    }
+
+    await markReceiptProcessed(
+      privilegedClient,
+      receipt.id,
+      companyId,
+      result.jobId,
+      `${intakeInput.sourceSystem}:${companyId}:${intakeInput.externalOrderId || eventId}`,
+    );
+
     await notifyOrderCreated({
       client: privilegedClient,
       draftJobId: result.jobId,
@@ -130,15 +156,17 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      receiptId: receipt.id,
       jobId: result.jobId,
       jobReference: result.jobReference,
       lifecycleStatus: result.lifecycleStatus,
     });
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Internal error";
+    if (receiptId && privilegedClient) {
+      await markReceiptFailed(privilegedClient, receiptId, message);
+    }
     console.error("[intake/orders] unhandled error", error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Internal error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: message, receiptId, retained: Boolean(receiptId) }, { status: 500 });
   }
 }

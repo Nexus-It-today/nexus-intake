@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { processIntake, type IntakeGoodsItem, type IntakeOrderInput } from "@/lib/intake/intakeService";
 import { notifyOrderCreated } from "@/lib/notify/orderCreated";
+import {
+  markReceiptFailed,
+  markReceiptProcessed,
+  markReceiptProcessing,
+  persistReceipt,
+} from "@/lib/intake/durableReceipt";
 
 type WooMetaEntry = {
   key?: string;
@@ -289,7 +295,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
     }
 
-    const payload = (await request.json().catch(() => ({}))) as WooOrder;
+    const rawPayload = await request.text();
+    const payload = (JSON.parse(rawPayload || "{}")) as WooOrder;
     const meta = buildMetaMap(payload.meta_data);
     const companyId = resolveCompanyId(payload, meta, request);
 
@@ -311,12 +318,55 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid webhook secret" }, { status: 401 });
     }
 
+    const externalOrderId = String(payload.id ?? "").trim();
+    if (!externalOrderId) {
+      return NextResponse.json({ error: "WooCommerce order id is required" }, { status: 400 });
+    }
+    const eventType = request.headers.get("x-wc-webhook-topic")?.trim() || "order.updated";
+    const deliveryId = request.headers.get("x-wc-webhook-delivery-id")?.trim();
+    const receipt = await persistReceipt(
+      client,
+      {
+        companyId,
+        sourceSystem: "woocommerce",
+        eventType,
+        externalEventId: deliveryId || `${eventType}:${externalOrderId}:${text(payload.status) || "unknown"}`,
+        externalOrderId,
+        payload,
+      },
+      rawPayload,
+    );
+    if (receipt.duplicate && receipt.status === "processed") {
+      return NextResponse.json({
+        success: true,
+        duplicate: true,
+        jobId: receipt.draftJobId,
+        receiptId: receipt.id,
+      });
+    }
+    if (receipt.duplicate && receipt.status === "processing") {
+      return NextResponse.json(
+        { success: true, retained: true, processing: true, receiptId: receipt.id },
+        { status: 202 },
+      );
+    }
+    await markReceiptProcessing(client, receipt.id);
+
     const intakeInput = buildIntakeInput(payload, companyId, meta);
     const result = await processIntake(intakeInput, client);
 
     if (!result.success) {
+      await markReceiptFailed(client, receipt.id, result.error || "Intake processing failed");
       return NextResponse.json({ error: result.error, validationErrors: result.validationErrors ?? [] }, { status: 400 });
     }
+
+    await markReceiptProcessed(
+      client,
+      receipt.id,
+      companyId,
+      result.jobId,
+      `woocommerce:${companyId}:${externalOrderId}`,
+    );
 
     await notifyOrderCreated({
       client,
@@ -352,6 +402,7 @@ export async function POST(request: NextRequest) {
       jobId: result.jobId,
       jobReference: result.jobReference,
       lifecycleStatus: result.lifecycleStatus,
+      receiptId: receipt.id,
     });
   } catch (error) {
     return NextResponse.json(

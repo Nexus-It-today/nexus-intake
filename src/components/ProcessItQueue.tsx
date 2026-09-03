@@ -43,6 +43,8 @@ export type ProcessItJob = {
   pushAttemptedAt: string | null;
   pushCompletedAt: string | null;
   xeroInvoiceId: string | null;
+  commercialTotal: string | null;
+  paymentStatus: string;
   currentStatus: string | null;
   routeStatus: string | null;
   routeDate: string | null;
@@ -649,6 +651,7 @@ export default function ProcessItQueue({
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [archivingId, setArchivingId] = useState<string | null>(null);
+  const [paymentLinkingId, setPaymentLinkingId] = useState<string | null>(null);
   const [sendResult, setSendResult] = useState<Record<string, { ok: boolean; msg: string }>>({});
 
   const loadJobs = useCallback(async () => {
@@ -848,6 +851,36 @@ export default function ProcessItQueue({
     },
     [loadJobs]
   );
+
+  const createPaymentLink = useCallback(async (job: ProcessItJob) => {
+    if (!supabase) return;
+    setPaymentLinkingId(job.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const response = await fetch("/api/payments/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ draftJobId: job.id }),
+      });
+      const result = (await response.json()) as { checkoutUrl?: string; error?: string };
+      if (!response.ok || !result.checkoutUrl) throw new Error(result.error ?? "Could not create payment link");
+      await navigator.clipboard.writeText(result.checkoutUrl).catch(() => undefined);
+      setSendResult((previous) => ({
+        ...previous,
+        [job.id]: { ok: true, msg: "Payment link created and copied. Opening Stripe Checkout…" },
+      }));
+      window.open(result.checkoutUrl, "_blank", "noopener,noreferrer");
+      setTimeout(() => void loadJobs(), 800);
+    } catch (error) {
+      setSendResult((previous) => ({
+        ...previous,
+        [job.id]: { ok: false, msg: error instanceof Error ? error.message : "Could not create payment link" },
+      }));
+    } finally {
+      setPaymentLinkingId(null);
+    }
+  }, [loadJobs]);
 
   const filteredJobs = jobs.filter((j) => jobMatchesFilter(j, filter));
 
@@ -1249,6 +1282,13 @@ export default function ProcessItQueue({
                           label="Edit Source"
                           onClick={() => openSourceOrder(job.id, true)}
                           variant="ghost"
+                        />
+
+                        <ActionButton
+                          label={paymentLinkingId === job.id ? "Creating link…" : job.paymentStatus === "paid" ? "Paid" : "Payment link"}
+                          onClick={() => void createPaymentLink(job)}
+                          disabled={paymentLinkingId === job.id || job.paymentStatus === "paid"}
+                          variant={job.paymentStatus === "paid" ? "ghost" : "link"}
                         />
 
                         {/* Send / Retry */}

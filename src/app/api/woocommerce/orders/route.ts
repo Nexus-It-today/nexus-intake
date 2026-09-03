@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { processIntake, type IntakeGoodsItem, type IntakeOrderInput } from "@/lib/intake/intakeService";
 import { notifyOrderCreated } from "@/lib/notify/orderCreated";
+import {
+  markReceiptFailed,
+  markReceiptProcessed,
+  markReceiptProcessing,
+  persistReceipt,
+} from "@/lib/intake/durableReceipt";
 
 type WooMetaEntry = {
   key?: string;
@@ -35,6 +41,8 @@ type WooOrder = {
   status?: string;
   customer_note?: string;
   payment_method_title?: string;
+  total?: string;
+  total_tax?: string;
   billing?: WooStop;
   shipping?: WooStop;
   line_items?: WooLineItem[];
@@ -252,6 +260,9 @@ function buildIntakeInput(order: WooOrder, companyId: string, meta: Map<string, 
   const goods = mapGoods(order.line_items);
   const collection = resolveCollectionStop(order, meta);
   const delivery = resolveDeliveryStop(order, meta);
+  const gross = toNumber(order.total);
+  const vat = toNumber(order.total_tax);
+  const net = gross > 0 ? gross - vat : 0;
 
   return {
     sourceSystem: "woocommerce",
@@ -269,9 +280,9 @@ function buildIntakeInput(order: WooOrder, companyId: string, meta: Map<string, 
     goods,
     commercial: {
       purchaseOrder: fromMeta(meta, "nexus_purchase_order", "purchase_order"),
-      net: fromMeta(meta, "nexus_net", "net_amount"),
-      vat: fromMeta(meta, "nexus_vat", "vat_amount"),
-      total: fromMeta(meta, "nexus_total", "total_amount"),
+      net: fromMeta(meta, "nexus_net", "net_amount") || (net > 0 ? net.toFixed(2) : ""),
+      vat: fromMeta(meta, "nexus_vat", "vat_amount") || (vat > 0 ? vat.toFixed(2) : ""),
+      total: fromMeta(meta, "nexus_total", "total_amount") || (gross > 0 ? gross.toFixed(2) : ""),
       invoiceRequired: true,
     },
     operations: {
@@ -289,7 +300,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
     }
 
-    const payload = (await request.json().catch(() => ({}))) as WooOrder;
+    const rawPayload = await request.text();
+    const payload = (JSON.parse(rawPayload || "{}")) as WooOrder;
     const meta = buildMetaMap(payload.meta_data);
     const companyId = resolveCompanyId(payload, meta, request);
 
@@ -311,12 +323,55 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid webhook secret" }, { status: 401 });
     }
 
+    const externalOrderId = String(payload.id ?? "").trim();
+    if (!externalOrderId) {
+      return NextResponse.json({ error: "WooCommerce order id is required" }, { status: 400 });
+    }
+    const eventType = request.headers.get("x-wc-webhook-topic")?.trim() || "order.updated";
+    const deliveryId = request.headers.get("x-wc-webhook-delivery-id")?.trim();
+    const receipt = await persistReceipt(
+      client,
+      {
+        companyId,
+        sourceSystem: "woocommerce",
+        eventType,
+        externalEventId: deliveryId || `${eventType}:${externalOrderId}:${text(payload.status) || "unknown"}`,
+        externalOrderId,
+        payload,
+      },
+      rawPayload,
+    );
+    if (receipt.duplicate && receipt.status === "processed") {
+      return NextResponse.json({
+        success: true,
+        duplicate: true,
+        jobId: receipt.draftJobId,
+        receiptId: receipt.id,
+      });
+    }
+    if (receipt.duplicate && receipt.status === "processing") {
+      return NextResponse.json(
+        { success: true, retained: true, processing: true, receiptId: receipt.id },
+        { status: 202 },
+      );
+    }
+    await markReceiptProcessing(client, receipt.id);
+
     const intakeInput = buildIntakeInput(payload, companyId, meta);
     const result = await processIntake(intakeInput, client);
 
     if (!result.success) {
+      await markReceiptFailed(client, receipt.id, result.error || "Intake processing failed");
       return NextResponse.json({ error: result.error, validationErrors: result.validationErrors ?? [] }, { status: 400 });
     }
+
+    await markReceiptProcessed(
+      client,
+      receipt.id,
+      companyId,
+      result.jobId,
+      `woocommerce:${companyId}:${externalOrderId}`,
+    );
 
     await notifyOrderCreated({
       client,
@@ -352,6 +407,7 @@ export async function POST(request: NextRequest) {
       jobId: result.jobId,
       jobReference: result.jobReference,
       lifecycleStatus: result.lifecycleStatus,
+      receiptId: receipt.id,
     });
   } catch (error) {
     return NextResponse.json(

@@ -41,6 +41,8 @@ type WooOrder = {
   status?: string;
   customer_note?: string;
   payment_method_title?: string;
+  total?: string;
+  total_tax?: string;
   billing?: WooStop;
   shipping?: WooStop;
   line_items?: WooLineItem[];
@@ -258,6 +260,9 @@ function buildIntakeInput(order: WooOrder, companyId: string, meta: Map<string, 
   const goods = mapGoods(order.line_items);
   const collection = resolveCollectionStop(order, meta);
   const delivery = resolveDeliveryStop(order, meta);
+  const gross = toNumber(order.total);
+  const vat = toNumber(order.total_tax);
+  const net = gross > 0 ? gross - vat : 0;
 
   return {
     sourceSystem: "woocommerce",
@@ -275,9 +280,9 @@ function buildIntakeInput(order: WooOrder, companyId: string, meta: Map<string, 
     goods,
     commercial: {
       purchaseOrder: fromMeta(meta, "nexus_purchase_order", "purchase_order"),
-      net: fromMeta(meta, "nexus_net", "net_amount"),
-      vat: fromMeta(meta, "nexus_vat", "vat_amount"),
-      total: fromMeta(meta, "nexus_total", "total_amount"),
+      net: fromMeta(meta, "nexus_net", "net_amount") || (net > 0 ? net.toFixed(2) : ""),
+      vat: fromMeta(meta, "nexus_vat", "vat_amount") || (vat > 0 ? vat.toFixed(2) : ""),
+      total: fromMeta(meta, "nexus_total", "total_amount") || (gross > 0 ? gross.toFixed(2) : ""),
       invoiceRequired: true,
     },
     operations: {

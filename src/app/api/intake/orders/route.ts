@@ -65,17 +65,27 @@ export async function POST(request: NextRequest) {
     let companyId = body.company_id?.trim() || "";
     let userId: string | null = null;
     const token = parseBearerToken(request);
-    if (token) {
-      const { data: { user } } = await authClient.auth.getUser(token);
-      userId = user?.id ?? null;
-      if (userId && !companyId) {
-        const { data: profile } = await privilegedClient
-          .from("profiles")
-          .select("company_id")
-          .eq("auth_user_id", userId)
-          .maybeSingle();
-        companyId = profile?.company_id ?? "";
-      }
+    if (!token) {
+      return NextResponse.json({ error: "Sign in is required. Website forms must use the signed public intake endpoint." }, { status: 401 });
+    }
+    const { data: { user }, error: authError } = await authClient.auth.getUser(token);
+    if (authError || !user) {
+      return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
+    }
+    userId = user.id;
+    const { data: profile } = await privilegedClient
+      .from("profiles")
+      .select("company_id, role")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+    if (!profile?.company_id) {
+      return NextResponse.json({ error: "No company linked to this user." }, { status: 403 });
+    }
+    const role = typeof profile.role === "string" ? profile.role.toLowerCase() : "";
+    const isAdmin = ["admin", "owner", "operations_admin", "ops_admin", "platform_admin", "super_admin"].includes(role);
+    if (!companyId) companyId = profile.company_id;
+    if (companyId !== profile.company_id && !isAdmin) {
+      return NextResponse.json({ error: "You cannot submit orders for another legal entity." }, { status: 403 });
     }
 
     if (!companyId) {
